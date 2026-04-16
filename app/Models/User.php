@@ -2,48 +2,64 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
+        'divisi',
+        'no_telp',
         'email',
         'password',
+        'alamat',
+        'foto_profile',
+        'role',
+        'status',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isRole($role)
+    {
+        if (is_array($role)) {
+            return in_array($this->role, $role);
+        }
+        return $this->role === $role;
+    }
+
+    public function isAdmin()
+    {
+        return in_array($this->role, ['admin', 'sekretaris', 'ketua']);
+    }
+
+    public function invites()
+    {
+        return $this->hasMany(AbsensiInvite::class);
+    }
+
+    public function absensi()
+    {
+        return $this->hasMany(Absensi::class);
+    }
+
+    public function kegiatans()
+    {
+        return $this->hasMany(Kegiatan::class, 'created_by');
     }
 }

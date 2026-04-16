@@ -47,6 +47,16 @@ return [
             'report' => false,
         ],
 
+        'profiles' => [
+            'driver' => 'local',
+            'root' => storage_path('profiles'),
+        ],
+
+        'konten' => [
+            'driver' => 'local',
+            'root' => storage_path('konten'),
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
