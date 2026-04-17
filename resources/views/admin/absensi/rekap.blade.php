@@ -1,70 +1,93 @@
 @extends('layouts.app')
 
-@section('title', 'Rekap Absensi - ' . $kegiatan->nama_kegiatan)
+@section('page-title', 'Rekap Absensi')
 
 @section('content')
-<div class="container">
-    <h1 class="mt-4 mb-3">Rekap Absensi untuk Kegiatan: "{{ $kegiatan->nama_kegiatan }}"</h1>
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-chart-bar me-1"></i>
-            Ringkasan Absensi
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="rekapTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Nama Anggota</th>
-                            <th>Email</th>
-                            @foreach ($sessions as $session)
-                                <th>
-                                    Sesi {{ $session->started_at->format('d M Y H:i') }} - 
-                                    {{ $session->ended_at ? $session->ended_at->format('H:i') : 'Aktif' }}
-                                </th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($users as $user)
-                            <tr>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                @foreach ($sessions as $session)
-                                    <td>
-                                        @php
-                                            $attendance = $attendanceData[$user->id]['sessions'][$session->id] ?? null;
-                                            $status = $attendance ? $attendance['status'] : 'absent';
-                                            $attended_at = $attendance ? \Carbon\Carbon::parse($attendance['attended_at'])->format('H:i:s') : null;
-                                        @endphp
-                                        @if ($status == 'present')
-                                            <span class="badge bg-success">Hadir</span> {{-- @if($attended_at) <small>({{ $attended_at }})</small> @endif --}}
-                                        @else
-                                            <span class="badge bg-danger">Tidak Hadir</span>
-                                        @endif
-                                    </td>
-                                @endforeach
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ 2 + count($sessions) }}" class="text-center">Belum ada anggota yang diundang atau sesi yang dimulai.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm p-4 bg-primary text-white">
+            <div class="d-flex align-items-center">
+                <div class="bg-white p-3 rounded-4 text-primary me-4">
+                    <i class="fas fa-list-alt fa-2x"></i>
+                </div>
+                <div>
+                    <h4 class="fw-800 mb-1">Rekap Absensi Kegiatan</h4>
+                    <p class="mb-0 opacity-75">{{ $kegiatan->nama_kegiatan }}</p>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="mb-4">
-        <a href="{{ route('admin.absensi.sesi', $kegiatan->id) }}" class="btn btn-secondary">Kembali ke Kelola Sesi</a>
+<div class="card border-0 shadow-sm">
+    <div class="card-header py-3">
+        <h6 class="m-0 fw-bold text-primary"><i class="fas fa-users-cog me-2"></i>Detail Kehadiran</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th width="50">#</th>
+                        <th>Nama Anggota</th>
+                        <th>Divisi</th>
+                        <th>Status Mulai</th>
+                        <th>Waktu Mulai</th>
+                        <th>Status Selesai</th>
+                        <th>Waktu Selesai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($invited_users as $index => $user)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>
+                            <p class="mb-0 fw-bold">{{ $user->name }}</p>
+                            <small class="text-muted">{{ $user->email }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary-subtle rounded-pill">{{ $user->divisi }}</span>
+                        </td>
+                        <td>
+                            @if($user->absen_mulai)
+                                <span class="badge bg-success-subtle">Hadir</span>
+                            @else
+                                <span class="badge bg-danger-subtle text-danger">Tidak Hadir</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($user->absen_mulai)
+                                <small>{{ $user->absen_mulai->waktu_absen->format('H:i:s d M Y') }}</small>
+                            @else
+                                <small class="text-muted">-</small>
+                            @endif
+                        </td>
+                        <td>
+                            @if($user->absen_selesai)
+                                <span class="badge bg-success-subtle">Hadir</span>
+                            @else
+                                <span class="badge bg-danger-subtle text-danger">Tidak Hadir</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($user->absen_selesai)
+                                <small>{{ $user->absen_selesai->waktu_absen->format('H:i:s d M Y') }}</small>
+                            @else
+                                <small class="text-muted">-</small>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3 opacity-20"></i>
+                            <p class="text-muted">Belum ada anggota yang diundang atau diabsen untuk kegiatan ini.</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Add any necessary JavaScript here if needed for advanced features
-</script>
-@endpush

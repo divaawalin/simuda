@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', 'Profil Anggota')
+@section('page-title', 'Profil Saya')
 
 @section('content')
 <div class="row">
@@ -38,7 +38,7 @@
                 <h6 class="m-0 fw-bold text-primary"><i class="fas fa-user-edit me-2"></i>Edit Profil</h6>
             </div>
             <div class="card-body">
-                <form id="profileForm" action="{{ route('anggota.profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form id="profileForm" action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
@@ -98,7 +98,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form action="{{ route('anggota.profile.password') }}" method="POST">
+                <form action="{{ route('admin.profile.password') }}" method="POST">
                     @csrf
                     @method('PUT')
                     

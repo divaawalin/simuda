@@ -9,277 +9,237 @@ use App\Models\AbsensiSesi;
 use App\Models\Kegiatan;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class AbsensiController extends Controller
 {
     /**
-     * Display a listing of kegiatan for attendance management.
+     * Step 1 — Pilih Kegiatan
      */
     public function index()
     {
-        $kegiatans = Kegiatan::all();
+        $kegiatans = Kegiatan::latest()->get();
         return view('admin.absensi.index', compact('kegiatans'));
     }
 
     /**
-     * Display form to invite members for a specific kegiatan.
+     * Step 2 — Halaman invite anggota
      */
-    public function invite(Kegiatan $kegiatan)
+    public function invite($kegiatan_id)
     {
-        // Fetch all users who are not yet invited to this kegiatan
-        $invitedUserIds = AbsensiInvite::where('kegiatan_id', $kegiatan->id)->pluck('user_id');
-        $members = User::whereNotIn('id', $invitedUserIds)->get();
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
+        $anggota = User::where('role', 'anggota')->where('status', 'aktif')->get();
+        $invited_ids = AbsensiInvite::where('kegiatan_id', $kegiatan_id)->pluck('user_id')->toArray();
 
-        return view('admin.absensi.invite', compact('kegiatan', 'members'));
+        return view('admin.absensi.invite', compact('kegiatan', 'anggota', 'invited_ids'));
     }
 
     /**
-     * Store invited members for a specific kegiatan.
+     * Simpan daftar anggota yang diinvite
      */
-    public function storeInvite(Request $request, Kegiatan $kegiatan)
+    public function storeInvite(Request $request, $kegiatan_id)
     {
-        $validator = Validator::make($request->all(), [
-            'member_ids' => 'required|array',
-            'member_ids.*' => 'exists:users,id',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        foreach ($request->member_ids as $userId) {
-            AbsensiInvite::create([
-                'kegiatan_id' => $kegiatan->id,
-                'user_id' => $userId,
-            ]);
-        }
-
-        return redirect()->route('admin.absensi.index')->with('success', 'Members invited successfully.');
-    }
-
-    /**
-     * Display form to manage attendance sessions for a specific kegiatan.
-     */
-    public function sesi(Kegiatan $kegiatan)
-    {
-        $sessions = AbsensiSesi::where('kegiatan_id', $kegiatan->id)->with('absensi')->get();
-        // Use the model's isSessionActive() method for clarity
-        $activeSession = $sessions->firstWhere(function ($session) {
-            return $session->isSessionActive();
-        });
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
         
-        // Fetch users who are invited and not yet in any session for this kegiatan
-        $invitedUserIds = AbsensiInvite::where('kegiatan_id', $kegiatan->id)->pluck('user_id');
-        // Collect all user IDs that have attended any session for this specific kegiatan
-        $attendedUserIds = Absensi::whereIn('absensi_sesi_id', $sessions->pluck('id'))->pluck('user_id')->unique();
-        
-        $availableMembers = User::whereIn('id', $invitedUserIds)
-                                ->whereNotIn('id', $attendedUserIds)
-                                ->get();
+        // Hapus invite lama
+        AbsensiInvite::where('kegiatan_id', $kegiatan_id)->delete();
 
-        return view('admin.absensi.sesi', compact('kegiatan', 'sessions', 'activeSession', 'availableMembers'));
-    }
-
-    /**
-     * Starts an attendance session for a kegiatan.
-     */
-    public function mulaiSesi(Kegiatan $kegiatan, Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'method' => 'required|in:mandiri,qr_code',
-            'start_time' => 'nullable|date_format:H:i',
-            'start_date' => 'nullable|date_format:Y-m-d',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        // Use the model's isSessionActive() method for clarity
-        $activeSession = AbsensiSesi::where('kegiatan_id', $kegiatan->id)->get()->firstWhere(function ($session) {
-            return $session->isSessionActive();
-        });
-
-        if ($activeSession) {
-            return back()->with('warning', 'A session is already active for this event.');
-        }
-
-        $session = new AbsensiSesi();
-        $session->kegiatan_id = $kegiatan->id;
-        $session->metode = $request->method; // Correctly map to model attribute 'metode'
-        $session->tipe_sesi = $request->method; // Assuming tipe_sesi should also be set or is redundant
-
-        if ($request->filled('start_date') && $request->filled('start_time')) {
-            // Correctly use the model's column name for start time
-            $session->dimulai_at = $request->start_date . ' ' . $request->start_time;
-        } else {
-            // Correctly use the model's column name for start time
-            $session->dimulai_at = now();
-        }
-
-        if ($request->method === 'qr_code') {
-            // Use the static method from the model
-            $session->qr_token = AbsensiSesi::generateQrToken(); 
-            // Optional: Set QR expiry, e.g., 1 hour from now
-            $session->qr_expires_at = now()->addHour(); 
-        }
-        
-        // Assuming the authenticated user is the one starting the session
-        // This requires authentication middleware to be active for the admin routes
-        if (auth()->check()) {
-            $session->dimulai_oleh = auth()->id();
-        }
-        
-        $session->save();
-
-        return redirect()->route('admin.absensi.sesi', $kegiatan->id)->with('success', 'Attendance session started successfully.');
-    }
-
-    /**
-     * Ends an active attendance session for a kegiatan.
-     */
-    public function akhiriSesi(Kegiatan $kegiatan, Request $request)
-    {
-        // Use the model's isSessionActive() method for clarity
-        $activeSession = AbsensiSesi::where('kegiatan_id', $kegiatan->id)->get()->firstWhere(function ($session) {
-            return $session->isSessionActive();
-        });
-
-        if (!$activeSession) {
-            return back()->with('warning', 'No active session found to end.');
-        }
-
-        // Correctly use the model's column name for end time
-        $activeSession->diselesaikan_at = now();
-        // Assuming the authenticated user is the one ending the session
-        if (auth()->check()) {
-            $activeSession->diselesaikan_oleh = auth()->id();
-        }
-        $activeSession->save();
-
-        return redirect()->route('admin.absensi.sesi', $kegiatan->id)->with('success', 'Attendance session ended successfully.');
-    }
-
-    /**
-     * Displays the QR code interface for an active QR session.
-     * Note: Actual scanning is client-side, this view will display the QR code to be scanned.
-     */
-    public function qr(Kegiatan $kegiatan)
-    {
-        // Use the model's isSessionActive() method for clarity and check method
-        $activeSession = AbsensiSesi::where('kegiatan_id', $kegiatan->id)
-                                    ->where('metode', 'qr_code') // Ensure it's a QR code session
-                                    ->get()
-                                    ->firstWhere(function ($session) {
-                                        return $session->isSessionActive();
-                                    });
-
-        if (!$activeSession || !$activeSession->qr_token) {
-            return redirect()->route('admin.absensi.sesi', $kegiatan->id)->with('warning', 'No active QR session found for this event or QR token is missing.');
-        }
-
-        // Generate QR code SVG using the token
-        $qrCodeSvg = QrCode::format('svg')->size(200)->generate($activeSession->qr_token);
-
-        return view('admin.absensi.qr-scanner', compact('kegiatan', 'qrCodeSvg', 'activeSession'));
-    }
-
-    /**
-     * Processes scanned QR codes from members.
-     * This method would typically be called by a client-side scanner.
-     */
-    public function scan(Kegiatan $kegiatan, Request $request)
-    {
-        // Combined validator for token and user_id
-        $validator = Validator::make($request->all(), [
-            'token' => 'required|string',
-            'user_id' => 'required|exists:users,id', // Assuming user_id is sent by the scanner app
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 400);
-        }
-
-        $userId = $request->user_id; // Use the provided user_id
-
-        // Find the active session matching the QR token for this kegiatan
-        // Use the model's isSessionActive() method for clarity
-        $session = AbsensiSesi::where('kegiatan_id', $kegiatan->id)
-                                ->where('qr_token', $request->token)
-                                ->get()
-                                ->firstWhere(function ($s) {
-                                    return $s->isSessionActive();
-                                });
-
-        if (!$session) {
-            return response()->json(['message' => 'Invalid or expired QR code session.'], 400);
-        }
-
-        // Check if the user has already attended this specific session
-        $existingAbsensi = Absensi::where('absensi_sesi_id', $session->id)
-                                    ->where('user_id', $userId)
-                                    ->first();
-
-        if ($existingAbsensi) {
-            return response()->json(['message' => 'You have already marked your attendance for this session.'], 409); // 409 Conflict
-        }
-
-        // Create the attendance record
-        Absensi::create([
-            'absensi_sesi_id' => $session->id,
-            'user_id' => $userId,
-            'attended_at' => now(),
-            'status' => 'present', // Default status
-        ]);
-
-        return response()->json(['message' => 'Attendance marked successfully.'], 200);
-    }
-
-    /**
-     * Displays attendance recap for a specific kegiatan.
-     */
-    public function rekap(Kegiatan $kegiatan)
-    {
-        // Fetch all sessions for the kegiatan, eager loading their absensi records
-        $sessions = AbsensiSesi::where('kegiatan_id', $kegiatan->id)->with('absensi')->get();
-        
-        // Aggregate attendance data preparation
-        $attendanceData = [];
-        
-        // Get all user IDs that were invited to this kegiatan
-        $invitedUserIds = AbsensiInvite::where('kegiatan_id', $kegiatan->id)->pluck('user_id');
-        
-        // Fetch User models for all invited users
-        $users = User::whereIn('id', $invitedUserIds)->get();
-
-        // Structure the attendance data for the view
-        foreach ($users as $user) {
-            $userAttendance = [];
-            // Iterate through each session to find the user's attendance status
-            foreach ($sessions as $session) {
-                // Find the specific attendance record for this user in this session
-                $absensi = $session->absensi->where('user_id', $user->id)->first();
-                
-                $userAttendance[$session->id] = [
-                    // Format session name for display, handle cases where started_at might be null (though unlikely if session is in $sessions)
-                    'session_name' => ($session->dimulai_at ? $session->dimulai_at->format('Y-m-d H:i') : 'N/A') . 
-                                      ($session->diselesaikan_at ? ' - ' . $session->diselesaikan_at->format('H:i') : ($session->dimulai_at ? ' (Active)' : '')),
-                    'status' => $absensi ? $absensi->status : 'absent',
-                    'attended_at' => $absensi ? $absensi->attended_at : null,
-                ];
+        // Simpan invite baru
+        if ($request->has('user_ids')) {
+            foreach ($request->user_ids as $user_id) {
+                AbsensiInvite::create([
+                    'kegiatan_id' => $kegiatan_id,
+                    'user_id' => $user_id,
+                ]);
             }
-            // Store attendance data keyed by user ID
-            $attendanceData[$user->id] = [
-                'name' => $user->name,
-                'email' => $user->email,
-                'sessions' => $userAttendance,
-            ];
         }
 
-        // Pass data to the view
-        return view('admin.absensi.rekap', compact('kegiatan', 'sessions', 'attendanceData', 'users'));
+        return redirect()->route('absensi.index')->with('success', 'Anggota berhasil diinvite ke kegiatan.');
+    }
+
+    /**
+     * Step 3 — Halaman kelola sesi absensi
+     */
+    public function sesi($kegiatan_id)
+    {
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
+        
+        // Cek sesi mulai
+        $sesi_mulai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)
+            ->where('tipe_sesi', 'mulai')
+            ->first();
+            
+        // Cek sesi selesai
+        $sesi_selesai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)
+            ->where('tipe_sesi', 'selesai')
+            ->first();
+
+        return view('admin.absensi.sesi', compact('kegiatan', 'sesi_mulai', 'sesi_selesai'));
+    }
+
+    /**
+     * Mulai sesi absensi (mulai/selesai)
+     */
+    public function mulaiSesi(Request $request, $kegiatan_id)
+    {
+        $request->validate([
+            'tipe_sesi' => 'required|in:mulai,selesai',
+            'metode' => 'required|in:mandiri,qr_code',
+        ]);
+
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
+
+        // Pastikan sesi belum ada atau belum dimulai
+        $existing_sesi = AbsensiSesi::where('kegiatan_id', $kegiatan_id)
+            ->where('tipe_sesi', $request->tipe_sesi)
+            ->first();
+
+        if ($existing_sesi) {
+            return back()->with('error', 'Sesi ini sudah pernah dibuat.');
+        }
+
+        $sesi = new AbsensiSesi();
+        $sesi->kegiatan_id = $kegiatan_id;
+        $sesi->tipe_sesi = $request->tipe_sesi;
+        $sesi->metode = $request->metode;
+        $sesi->status_sesi = 'berlangsung';
+        
+        if ($request->metode === 'qr_code') {
+            $sesi->qr_token = Str::random(40);
+            $sesi->qr_expires_at = now()->addHours(5); // Default 5 jam
+        }
+
+        $sesi->dimulai_oleh = Auth::id();
+        $sesi->dimulai_at = now();
+        $sesi->save();
+
+        return back()->with('success', 'Sesi absensi berhasil dimulai.');
+    }
+
+    /**
+     * Akhiri sesi absensi
+     */
+    public function akhiriSesi(Request $request, $kegiatan_id)
+    {
+        $request->validate([
+            'tipe_sesi' => 'required|in:mulai,selesai',
+        ]);
+
+        $sesi = AbsensiSesi::where('kegiatan_id', $kegiatan_id)
+            ->where('tipe_sesi', $request->tipe_sesi)
+            ->where('status_sesi', 'berlangsung')
+            ->firstOrFail();
+
+        $sesi->status_sesi = 'selesai';
+        $sesi->diselesaikan_oleh = Auth::id();
+        $sesi->diselesaikan_at = now();
+        $sesi->save();
+
+        return back()->with('success', 'Sesi absensi berhasil diakhiri.');
+    }
+
+    /**
+     * Tampilkan QR Code (jika metode QR)
+     */
+    public function qr($kegiatan_id)
+    {
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
+        
+        // Cari sesi yang sedang berlangsung dan menggunakan QR
+        $sesi = AbsensiSesi::where('kegiatan_id', $kegiatan_id)
+            ->where('status_sesi', 'berlangsung')
+            ->where('metode', 'qr_code')
+            ->first();
+
+        if (!$sesi) {
+            return redirect()->route('absensi.sesi', $kegiatan_id)->with('error', 'Tidak ada sesi QR yang sedang berlangsung.');
+        }
+
+        return view('admin.absensi.qr-scanner', compact('kegiatan', 'sesi'));
+    }
+
+    /**
+     * Proses scan QR Code dari anggota
+     */
+    public function scan(Request $request, $kegiatan_id)
+    {
+        $request->validate([
+            'qr_data' => 'required', // Data dari QR Anggota (berisi user_id)
+        ]);
+
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
+        
+        // Cari sesi yang sedang berlangsung
+        $sesi = AbsensiSesi::where('kegiatan_id', $kegiatan_id)
+            ->where('status_sesi', 'berlangsung')
+            ->where('metode', 'qr_code')
+            ->first();
+
+        if (!$sesi) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada sesi QR yang sedang berlangsung.'], 400);
+        }
+
+        // Parse QR Data anggota (asumsi data adalah JSON string {"user_id": 1, "kegiatan_id": 1})
+        $data = json_decode($request->qr_data);
+        if (!$data || !isset($data->user_id)) {
+            return response()->json(['success' => false, 'message' => 'Format QR tidak valid.'], 400);
+        }
+
+        $user_id = $data->user_id;
+
+        // Cek apakah anggota diinvite
+        $is_invited = AbsensiInvite::where('kegiatan_id', $kegiatan_id)->where('user_id', $user_id)->exists();
+        if (!$is_invited) {
+            return response()->json(['success' => false, 'message' => 'Anggota tidak terdaftar dalam kegiatan ini.'], 400);
+        }
+
+        // Cek apakah sudah absen
+        $already_absen = Absensi::where('absensi_sesi_id', $sesi->id)->where('user_id', $user_id)->exists();
+        if ($already_absen) {
+            return response()->json(['success' => false, 'message' => 'Anggota sudah melakukan absensi.'], 400);
+        }
+
+        // Simpan absensi
+        Absensi::create([
+            'kegiatan_id' => $kegiatan_id,
+            'absensi_sesi_id' => $sesi->id,
+            'user_id' => $user_id,
+            'tipe_sesi' => $sesi->tipe_sesi,
+            'waktu_absen' => now(),
+            'metode' => 'qr_code',
+            'status' => 'hadir',
+        ]);
+
+        $user = User::find($user_id);
+
+        return response()->json(['success' => true, 'message' => 'Absensi berhasil: ' . $user->name]);
+    }
+
+    /**
+     * Rekap absensi kegiatan
+     */
+    public function rekap($kegiatan_id)
+    {
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
+        $invited_users = User::whereIn('id', function($query) use ($kegiatan_id) {
+            $query->select('user_id')->from('absensi_invite')->where('kegiatan_id', $kegiatan_id);
+        })->get();
+
+        $sesi_mulai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'mulai')->first();
+        $sesi_selesai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'selesai')->first();
+
+        foreach ($invited_users as $user) {
+            $user->absen_mulai = Absensi::where('absensi_sesi_id', optional($sesi_mulai)->id)
+                ->where('user_id', $user->id)
+                ->first();
+            
+            $user->absen_selesai = Absensi::where('absensi_sesi_id', optional($sesi_selesai)->id)
+                ->where('user_id', $user->id)
+                ->first();
+        }
+
+        return view('admin.absensi.rekap', compact('kegiatan', 'invited_users', 'sesi_mulai', 'sesi_selesai'));
     }
 }

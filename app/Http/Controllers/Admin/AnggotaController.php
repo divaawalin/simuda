@@ -5,17 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 class AnggotaController extends Controller
 {
-    public function index()
-    {
-        $anggota = User::where('role', 'anggota')->latest()->get();
-        return view('admin.anggota.index', compact('anggota'));
-    }
-
     public function create()
     {
         return view('admin.anggota.create');
@@ -40,7 +34,7 @@ class AnggotaController extends Controller
 
         if ($request->hasFile('foto_profile')) {
             $file = $request->file('foto_profile');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
             $file->move(storage_path('profiles'), $fileName);
             $data['foto_profile'] = $fileName;
         }
@@ -53,6 +47,7 @@ class AnggotaController extends Controller
     public function edit($id)
     {
         $anggota = User::findOrFail($id);
+
         return view('admin.anggota.edit', compact('anggota'));
     }
 
@@ -64,25 +59,25 @@ class AnggotaController extends Controller
             'name' => 'required|string|max:255',
             'divisi' => 'required|string|max:255',
             'no_telp' => 'required|string|max:20',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $anggota->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$anggota->id,
             'password' => 'nullable|string|min:8',
             'alamat' => 'required|string',
             'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->except(['password']);
-        
+
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
 
         if ($request->hasFile('foto_profile')) {
             // Hapus foto lama jika ada
-            if ($anggota->foto_profile && File::exists(storage_path('profiles/' . $anggota->foto_profile))) {
-                File::delete(storage_path('profiles/' . $anggota->foto_profile));
+            if ($anggota->foto_profile && File::exists(storage_path('profiles/'.$anggota->foto_profile))) {
+                File::delete(storage_path('profiles/'.$anggota->foto_profile));
             }
             $file = $request->file('foto_profile');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
             $file->move(storage_path('profiles'), $fileName);
             $data['foto_profile'] = $fileName;
         }
@@ -95,10 +90,10 @@ class AnggotaController extends Controller
     public function destroy($id)
     {
         $anggota = User::findOrFail($id);
-        
+
         // Hapus foto profile jika ada
-        if ($anggota->foto_profile && File::exists(storage_path('profiles/' . $anggota->foto_profile))) {
-            File::delete(storage_path('profiles/' . $anggota->foto_profile));
+        if ($anggota->foto_profile && File::exists(storage_path('profiles/'.$anggota->foto_profile))) {
+            File::delete(storage_path('profiles/'.$anggota->foto_profile));
         }
 
         $anggota->delete();

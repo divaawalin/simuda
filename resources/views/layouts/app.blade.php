@@ -4,313 +4,464 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'SIMUDA') }}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --primary-color: #048E8E;
+            --secondary-color: #5FC6D7;
+            --dark-color: #1A252F;
+            --light-bg: #F8F9FA;
+            --text-dark: #2C3E50;
+            --text-muted: #7F8C8D;
+            --white: #FFFFFF;
+            --sidebar-width: 280px;
+            --border-radius: 12px;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        .wrapper {
             display: flex;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            min-width: var(--sidebar-width);
+            max-width: var(--sidebar-width);
+            background: var(--white);
+            color: var(--text-dark);
+            transition: var(--transition);
+            min-height: 100vh;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
             height: 100vh;
-            background-color: #f4f7f6;
-            color: #333;
-        }
-        .sidebar {
-            width: 260px;
-            background-color: #2c3e50;
-            color: white;
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
-        }
-        .sidebar-header {
-            padding: 20px;
-            text-align: center;
-            background-color: #1a252f;
-        }
-        .sidebar-header h2 {
-            margin: 0;
-            font-size: 24px;
-            letter-spacing: 1px;
-        }
-        .sidebar-menu {
-            flex: 1;
-            padding: 10px 0;
-            overflow-y: auto;
-        }
-        .sidebar-menu a {
-            color: #bdc3c7;
-            text-decoration: none;
-            padding: 12px 25px;
-            display: block;
-            transition: all 0.3s;
-            border-left: 4px solid transparent;
-        }
-        .sidebar-menu a:hover {
-            background-color: #34495e;
-            color: white;
-        }
-        .sidebar-menu a.active {
-            background-color: #34495e;
-            color: white;
-            border-left: 4px solid #3498db;
-        }
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .topbar {
-            height: 60px;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            z-index: 10;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .role-badge {
-            background-color: #3498db;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        .btn-logout {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
-        .btn-logout:hover {
-            background-color: #c0392b;
-        }
-        .content {
-            padding: 30px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        /* Dashboard Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        .stat-card h3 {
-            margin: 0;
-            color: #7f8c8d;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-        .stat-card p {
-            margin: 10px 0 0;
-            font-size: 32px;
-            font-weight: bold;
-            color: #2c3e50;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.02);
         }
 
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 15px;
+        #sidebar .sidebar-header {
+            padding: 30px 25px;
             text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        tr:last-child td {
-            border-bottom: none;
         }
 
-        /* Forms */
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        #sidebar .sidebar-header h3 {
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 0;
+            letter-spacing: -1px;
+            font-size: 1.5rem;
         }
-        .form-group {
-            margin-bottom: 20px;
+
+        #sidebar ul.components {
+            padding: 10px 15px;
+            flex-grow: 1;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
+
+        #sidebar ul li {
+            margin-bottom: 5px;
         }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 4px;
+
+        #sidebar ul li a {
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        #sidebar ul li a i {
+            width: 25px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        #sidebar ul li a:hover {
+            color: var(--primary-color);
+            background: rgba(4, 142, 142, 0.05);
+        }
+
+        #sidebar ul li.active > a {
+            color: var(--white);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 15px rgba(4, 142, 142, 0.2);
+        }
+
+        #sidebar ul li.active > a i {
+            color: var(--white);
+        }
+
+        /* Content Styling */
+        #content {
+            width: 100%;
+            padding: 0;
+            min-height: 100vh;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            padding: 15px 40px;
+            background: var(--white);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: none;
+        }
+
+        .main-container {
+            padding: 40px;
+            flex-grow: 1;
+        }
+
+        /* Card Customization */
+        .card {
             border: none;
-            transition: background 0.3s;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            background: var(--white);
+            margin-bottom: 25px;
         }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 20px 25px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Buttons Customization */
         .btn-primary {
-            background-color: #3498db;
-            color: white;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(4, 142, 142, 0.2);
+            transition: var(--transition);
         }
+
         .btn-primary:hover {
-            background-color: #2980b9;
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(4, 142, 142, 0.3);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
+
         .btn-success {
-            background-color: #2ecc71;
-            color: white;
+            background-color: #2ECC71;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
         }
-        .btn-success:hover {
-            background-color: #27ae60;
+
+        /* Stats Cards */
+        .stat-card {
+            padding: 25px;
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
         }
-        .btn-warning {
-            background-color: #f1c40f;
-            color: white;
+
+        .stat-card .icon {
+            position: absolute;
+            right: 20px;
+            bottom: 10px;
+            font-size: 4rem;
+            opacity: 0.1;
+            color: var(--primary-color);
         }
-        .btn-warning:hover {
-            background-color: #f39c12;
+
+        /* Tables Customization */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
         }
-        .btn-danger {
-            background-color: #e74c3c;
-            color: white;
+
+        .table thead th {
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 15px 25px;
         }
-        .btn-danger:hover {
-            background-color: #c0392b;
+
+        .table tbody tr {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 12px;
+
+        .table tbody td {
+            padding: 20px 25px;
+            border: none;
+            vertical-align: middle;
+        }
+
+        .table tbody tr td:first-child {
+            border-top-left-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
+        }
+
+        .table tbody tr td:last-child {
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
         }
 
         /* Badges */
         .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
             font-weight: 600;
-            text-transform: uppercase;
+            font-size: 0.8rem;
         }
-        .badge-info { background-color: #3498db; color: white; }
-        .badge-success { background-color: #2ecc71; color: white; }
-        .badge-secondary { background-color: #95a5a6; color: white; }
+
+        .bg-success-subtle {
+            background-color: rgba(46, 204, 113, 0.1) !important;
+            color: #2ECC71 !important;
+        }
+
+        .bg-primary-subtle {
+            background-color: rgba(4, 142, 142, 0.1) !important;
+            color: var(--primary-color) !important;
+        }
+
+        .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 15px 25px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--light-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #DDD;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #CCC;
+        }
     </style>
+    @stack('styles')
 </head>
 <body>
-    @auth
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>SIMUDA</h2>
-        </div>
-        <div class="sidebar-menu">
-            @if(auth()->user()->role !== 'anggota')
-                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Dashboard</a>
-                <a href="{{ route('kegiatan.index') }}" class="{{ request()->routeIs('kegiatan.*') ? 'active' : '' }}">Manajemen Kegiatan</a>
-                <a href="{{ route('anggota.index') }}" class="{{ request()->routeIs('anggota.*') ? 'active' : '' }}">Manajemen Anggota</a>
-                <a href="{{ route('absensi.index') }}" class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}">Manajemen Absensi</a>
-                <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">Users Admin</a>
-                <a href="{{ route('konten.index') }}" class="{{ request()->routeIs('konten.*') ? 'active' : '' }}">Manajemen Konten</a>
-                <a href="{{ route('admin.profile') }}" class="{{ request()->routeIs('admin.profile') ? 'active' : '' }}">Profile</a>
-            @else
-                <a href="{{ route('anggota.dashboard') }}" class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">Dashboard</a>
-                <a href="{{ route('anggota.absensi.index') }}" class="{{ request()->routeIs('anggota.absensi.*') ? 'active' : '' }}">Absensi</a>
-                <a href="{{ route('anggota.profile') }}" class="{{ request()->routeIs('anggota.profile') ? 'active' : '' }}">Profile</a>
-            @endif
-        </div>
-    </div>
-    <div class="main-content">
-        <div class="topbar">
-            <div class="user-info">
-                <span>Selamat Datang, <strong>{{ auth()->user()->name }}</strong></span>
-                <span class="role-badge">{{ auth()->user()->role }}</span>
+    <div class="wrapper">
+        @auth
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>SIMUDA</h3>
             </div>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn-logout">Logout</button>
-            </form>
+
+            <ul class="list-unstyled components">
+                @if(auth()->user()->role !== 'anggota')
+                    <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('admin.dashboard') }}"><i class="fas fa-th me-2"></i> Dashboard</a>
+                    </li>
+                    <li class="{{ request()->routeIs('kegiatan.*') ? 'active' : '' }}">
+                        <a href="{{ route('kegiatan.index') }}"><i class="fas fa-calendar-alt me-2"></i> Kegiatan</a>
+                    </li>
+                    <li class="{{ request()->routeIs('anggota.*') ? 'active' : '' }}">
+                        <a href="{{ route('anggota.index') }}"><i class="fas fa-users me-2"></i> Anggota</a>
+                    </li>
+                    <li class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}">
+                        <a href="{{ route('absensi.index') }}"><i class="fas fa-clipboard-check me-2"></i> Absensi</a>
+                    </li>
+                    <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+                        <a href="{{ route('users.index') }}"><i class="fas fa-user-shield me-2"></i> Admins</a>
+                    </li>
+                    <li class="{{ request()->routeIs('konten.*') ? 'active' : '' }}">
+                        <a href="{{ route('konten.index') }}"><i class="fas fa-layer-group me-2"></i> Konten</a>
+                    </li>
+                    <li class="{{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+                        <a href="{{ route('admin.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
+                    </li>
+                @else
+                    <li class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('anggota.dashboard') }}"><i class="fas fa-house me-2"></i> Dashboard</a>
+                    </li>
+                    <li class="{{ request()->routeIs('anggota.absensi.*') ? 'active' : '' }}">
+                        <a href="{{ route('anggota.absensi.index') }}"><i class="fas fa-fingerprint me-2"></i> Absensi</a>
+                    </li>
+                    <li class="{{ request()->routeIs('anggota.profile') ? 'active' : '' }}">
+                        <a href="{{ route('anggota.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
+                    </li>
+                @endif
+            </ul>
+        </nav>
+        @endauth
+
+        <!-- Page Content -->
+        <div id="content">
+            @auth
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <h5 class="mb-0 fw-bold">@yield('page-title', 'Overview')</h5>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ms-auto align-items-center">
+                            <li class="nav-item me-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="text-end me-3">
+                                        <p class="mb-0 fw-bold small">{{ auth()->user()->name }}</p>
+                                        <p class="mb-0 text-muted smaller" style="font-size: 0.7rem;">{{ strtoupper(auth()->user()->role) }}</p>
+                                    </div>
+                                    @if(auth()->user()->foto_profile)
+                                        <img src="{{ route('storage.profiles', auth()->user()->foto_profile) }}" class="rounded-circle shadow-sm" width="40" height="40" style="object-fit: cover;">
+                                    @else
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" width="40" height="40" style="width: 40px; height: 40px;">
+                                            {{ substr(auth()->user()->name, 0, 1) }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-danger btn-sm border-0 rounded-circle" title="Logout">
+                                        <i class="fas fa-power-off"></i>
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            @endauth
+
+            <div class="main-container">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
         </div>
-        <div class="content">
-    @else
-        <div class="main-content" style="width: 100%;">
-        <div class="content">
-    @endauth
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Session Success Alert
             @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
             @endif
 
+            // Session Error Alert
             @if(session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
             @endif
 
-            @yield('content')
-        </div>
-    </div>
-@auth
-    </div>
-@endauth
+            // Global Confirmation for Delete/Important Actions
+            $('.confirm-dialog').on('click', function(e) {
+                e.preventDefault();
+                let form = $(this).closest('form');
+                let text = $(this).data('text') || 'Tindakan ini tidak dapat dibatalkan!';
+                let confirmButtonText = $(this).data('confirm-button') || 'Ya, Hapus!';
+                
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: text,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: confirmButtonText,
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            // Logout Confirmation
+            $('.logout-btn').on('click', function(e) {
+                e.preventDefault();
+                let form = $(this).closest('form');
+                
+                Swal.fire({
+                    title: 'Konfirmasi Logout',
+                    text: "Apakah Anda yakin ingin keluar?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#048E8E',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Logout',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+    @stack('scripts')
 </body>
 </html>

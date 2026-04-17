@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AnggotaController;
 use App\Http\Controllers\Admin\KegiatanController;
 use App\Http\Controllers\Admin\KontenController;
-use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Anggota\AbsensiController as AnggotaAbsensiController;
 use App\Http\Controllers\Anggota\AnggotaDashboardController;
@@ -61,9 +61,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('/konten', KontenController::class);
 
         // Profile
-        Route::get('/profile', [ProfileController::class, 'index'])->name('admin.profile');
-        Route::put('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
-        Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('admin.profile.password');
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+        Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password');
     });
 
     // Anggota Area
@@ -104,10 +104,5 @@ Route::get('/storage/konten/{filename}', function ($filename) {
     $type = File::mimeType($path);
 
     return response($file, 200)->header('Content-Type', $type);
-})->name('storage.konten'); // Anggota Absensi Routes
-Route::middleware(['auth', 'anggota'])->prefix('anggota')->name('anggota.')->group(function () {
-    Route::get('/absensi', [AnggotaAbsensiController::class, 'index'])->name('absensi.index');
-    Route::get('/absensi/{kegiatan}', [AnggotaAbsensiController::class, 'detail'])->name('absensi.detail');
-    Route::get('/absensi/{kegiatan}/qr', [AnggotaAbsensiController::class, 'qr'])->name('absensi.qr');
-    Route::post('/absensi/{kegiatan}/absen', [AnggotaAbsensiController::class, 'absen'])->name('absensi.absen');
-});
+})->name('storage.konten');
+

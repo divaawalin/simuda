@@ -9,174 +9,105 @@ use App\Models\AbsensiSesi;
 use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class AbsensiController extends Controller
 {
     /**
-     * Display list of Kegiatan the logged-in member is invited to.
+     * Step 1 — Pilih Kegiatan
      */
     public function index()
     {
         $user = Auth::user();
-        if (!$user) {
-            // Should not happen with 'auth' middleware, but good practice
-            abort(401, 'Unauthenticated.');
-        }
-
-        // Get IDs of kegiatan the user is invited to
-        $invitedKegiatanIds = AbsensiInvite::where('user_id', $user->id)->pluck('kegiatan_id');
-
-        // Fetch the actual kegiatan objects
-        $kegiatans = Kegiatan::whereIn('id', $invitedKegiatanIds)->get();
+        
+        // Ambil kegiatan yang diinvite
+        $kegiatans = Kegiatan::whereIn('id', function($query) use ($user) {
+            $query->select('kegiatan_id')->from('absensi_invite')->where('user_id', $user->id);
+        })->latest()->get();
 
         return view('anggota.absensi.index', compact('kegiatans'));
     }
 
     /**
-     * Show session details for a given Kegiatan, allowing attendance submission.
+     * Step 2 — Detail sesi absensi kegiatan
      */
-    public function detail(Kegiatan $kegiatan)
+    public function detail($kegiatan_id)
     {
         $user = Auth::user();
-        if (!$user) {
-            abort(401, 'Unauthenticated.');
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
+
+        // Pastikan diinvite
+        $is_invited = AbsensiInvite::where('kegiatan_id', $kegiatan_id)->where('user_id', $user->id)->exists();
+        if (!$is_invited) {
+            abort(403, 'Anda tidak diinvite ke kegiatan ini.');
         }
 
-        // Verify if the logged-in user is invited to this Kegiatan
-        $isInvited = $user->absensiInvites()->where('kegiatan_id', $kegiatan->id)->exists();
-        if (!$isInvited) {
-            abort(403, 'You are not invited to this activity.');
-        }
+        $sesi_mulai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'mulai')->first();
+        $sesi_selesai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'selesai')->first();
 
-        // Fetch active and upcoming sessions for the given kegiatan
-        // Assuming 'sesis()' is a relationship method in the Kegiatan model
-        $sesis = $kegiatan->sesis()
-                         ->whereIn('type', ['mulai', 'selesai'])
-                         ->orderBy('started_at') // Order by start time to show them logically
-                         ->get();
+        // Cek apakah sudah absen
+        $absen_mulai = Absensi::where('absensi_sesi_id', optional($sesi_mulai)->id)->where('user_id', $user->id)->first();
+        $absen_selesai = Absensi::where('absensi_sesi_id', optional($sesi_selesai)->id)->where('user_id', $user->id)->first();
 
-        return view('anggota.absensi.detail', compact('kegiatan', 'sesis', 'user'));
+        return view('anggota.absensi.detail', compact('kegiatan', 'sesi_mulai', 'sesi_selesai', 'absen_mulai', 'absen_selesai'));
     }
 
     /**
-     * Display the member's personal QR code for scanning by admin.
+     * Step 3 — Tampilkan QR Code anggota
      */
-    public function qr(Kegiatan $kegiatan)
+    public function qr($kegiatan_id)
     {
         $user = Auth::user();
-        if (!$user) {
-            abort(401, 'Unauthenticated.');
-        }
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
 
-        // Verify if the logged-in user is invited to this Kegiatan
-        $isInvited = $user->absensiInvites()->where('kegiatan_id', $kegiatan->id)->exists();
-        if (!$isInvited) {
-            abort(403, 'You are not invited to this activity.');
-        }
-
-        // Data to be encoded in QR code: user ID and kegiatan ID
-        // This QR code is for the admin to scan the member
+        // Data QR berisi user_id dan kegiatan_id
         $qrData = json_encode([
             'user_id' => $user->id,
             'kegiatan_id' => $kegiatan->id,
-            // Optionally include a specific session ID if needed for a direct scan submission,
-            // but typically the admin interface would choose the session.
-            // For now, let's keep it general for the member to show.
         ]);
 
-        return view('anggota.absensi.qr', compact('qrData', 'kegiatan', 'user'));
+        return view('anggota.absensi.qr', compact('kegiatan', 'qrData'));
     }
 
     /**
-     * Submit attendance for mulai or selesai session.
-     * Handles both 'mandiri' (self-submission) and 'qr_code' (admin scan) methods.
+     * Submit absen mandiri
      */
-    public function absen(Kegiatan $kegiatan, Request $request)
+    public function absen(Request $request, $kegiatan_id)
     {
+        $request->validate([
+            'tipe_sesi' => 'required|in:mulai,selesai',
+        ]);
+
         $user = Auth::user();
-        if (!$user) {
-            abort(401, 'Unauthenticated.');
-        }
+        $kegiatan = Kegiatan::findOrFail($kegiatan_id);
 
-        // Verify if the logged-in user is invited to this Kegiatan
-        // This check is for 'mandiri' submissions. For 'qr_code', we verify the scanned user.
-        $isInvited = $user->absensiInvites()->where('kegiatan_id', $kegiatan->id)->exists();
-        if (!$isInvited && $request->input('method') === 'mandiri') {
-            abort(403, 'You are not invited to this activity.');
-        }
-
-        $method = $request->input('method');
-        $sessionId = $request->input('session_id');
-        $submittedUserId = $user->id; // Default to logged-in user for mandiri
-
-        if ($method === 'qr_code') {
-            // For QR code method, user_id and session_id are submitted by admin's scanner
-            $submittedUserId = $request->input('user_id');
-            $sessionId = $request->input('session_id');
-            
-            if (!$submittedUserId || !$sessionId) {
-                return back()->withErrors(['qr_scan' => 'Invalid QR code data. Please try again.']);
-            }
-
-            // Verify if the scanned user is invited to this Kegiatan
-            $scannedUser = \App\Models\User::find($submittedUserId);
-            if (!$scannedUser || !$scannedUser->absensiInvites()->where('kegiatan_id', $kegiatan->id)->exists()) {
-                return back()->withErrors(['qr_scan' => 'The scanned user is not invited to this activity.']);
-            }
-        } elseif ($method !== 'mandiri' || !$sessionId) {
-            return back()->withErrors(['submission' => 'Invalid submission data. Please select a session and method.']);
-        }
-
-        // Find the specific session
-        $sesi = AbsensiSesi::where('id', $sessionId)
-                           ->where('kegiatan_id', $kegiatan->id)
-                           ->first();
+        // Cari sesi yang sedang berlangsung dan metode mandiri
+        $sesi = AbsensiSesi::where('kegiatan_id', $kegiatan_id)
+            ->where('tipe_sesi', $request->tipe_sesi)
+            ->where('status_sesi', 'berlangsung')
+            ->where('metode', 'mandiri')
+            ->first();
 
         if (!$sesi) {
-            return back()->withErrors(['session' => 'Session not found for this activity.']);
+            return back()->with('error', 'Sesi absensi mandiri tidak tersedia atau belum dimulai.');
         }
 
-        // Check if the session has started
-        // For 'mulai', it needs to have started. For 'selesai', it also needs to have started.
-        // The prompt implies sessions should be available if admin started them.
-        // We assume 'started_at' is the key indicator that a session is active.
-        if (!$sesi->started_at || now() < $sesi->started_at) {
-             return back()->withErrors(['session' => 'This session has not started yet.']);
+        // Cek apakah sudah absen
+        $already_absen = Absensi::where('absensi_sesi_id', $sesi->id)->where('user_id', $user->id)->exists();
+        if ($already_absen) {
+            return back()->with('error', 'Anda sudah melakukan absensi.');
         }
 
-        // Check if attendance is already recorded for this user and session
-        $existingAttendance = Absensi::where('user_id', $submittedUserId)
-                                     ->where('absensi_sesi_id', $sessionId)
-                                     ->first();
+        // Simpan absensi
+        Absensi::create([
+            'kegiatan_id' => $kegiatan_id,
+            'absensi_sesi_id' => $sesi->id,
+            'user_id' => $user->id,
+            'tipe_sesi' => $request->tipe_sesi,
+            'waktu_absen' => now(),
+            'metode' => 'mandiri',
+            'status' => 'hadir',
+        ]);
 
-        if ($existingAttendance) {
-            return back()->withErrors(['attendance' => 'Attendance already recorded for this session.']);
-        }
-
-        // Record attendance
-        try {
-            Absensi::create([
-                'user_id' => $submittedUserId,
-                'kegiatan_id' => $kegiatan->id,
-                'absensi_sesi_id' => $sessionId,
-                'method' => $method,
-                'timestamp' => now(),
-            ]);
-
-            return back()->with('success', 'Attendance recorded successfully!');
-
-        } catch (\Exception $e) {
-            // Log the error for debugging
-            Log::error("Attendance submission failed: " . $e->getMessage(), [
-                'user_id' => $submittedUserId,
-                'kegiatan_id' => $kegiatan->id,
-                'absensi_sesi_id' => $sessionId,
-                'method' => $method,
-                'error' => $e->getMessage()
-            ]);
-            return back()->withErrors(['error' => 'An error occurred while recording attendance. Please try again later.']);
-        }
+        return redirect()->route('anggota.absensi.detail', $kegiatan_id)->with('success', 'Absensi berhasil dicatat.');
     }
 }

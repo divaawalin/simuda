@@ -12,6 +12,7 @@ class KegiatanController extends Controller
     public function index()
     {
         $kegiatans = Kegiatan::with('creator')->orderBy('tanggal', 'desc')->get();
+
         return view('admin.kegiatan.index', compact('kegiatans'));
     }
 
@@ -42,6 +43,7 @@ class KegiatanController extends Controller
     public function edit($id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
+
         return view('admin.kegiatan.edit', compact('kegiatan'));
     }
 

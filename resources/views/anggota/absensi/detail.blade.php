@@ -1,91 +1,118 @@
 @extends('layouts.app')
 
+@section('page-title', 'Absensi Kegiatan')
+
 @section('content')
-<div class="container">
-    <h1>Detail Kegiatan: {{ $kegiatan->name }}</h1>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm p-4 bg-white">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary text-white p-3 rounded-4 me-4">
+                    <i class="fas fa-calendar-check fa-2x"></i>
+                </div>
+                <div>
+                    <h4 class="fw-800 mb-1 text-primary">{{ $kegiatan->nama_kegiatan }}</h4>
+                    <p class="mb-0 text-muted"><i class="fas fa-map-marker-alt me-1"></i> {{ $kegiatan->lokasi }} | <i class="fas fa-calendar-day me-1 ms-2"></i> {{ $kegiatan->tanggal }}</p>
+                </div>
+            </div>
         </div>
-    @endif
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    </div>
+</div>
 
-    <div class="card mb-3">
-        <div class="card-header">
-            Sesi Kegiatan
-        </div>
-        <div class="card-body">
-            @if($sesis->isEmpty())
-                <p>Belum ada sesi yang dijadwalkan untuk kegiatan ini.</p>
-            @else
-                @foreach($sesis as $sesi)
-                    <div class="border p-3 mb-3 rounded">
-                        <h4>Sesi {{ ucfirst($sesi->type) }}</h4>
-                        <p>
-                            <strong>Status:</strong>
-                            @if ($sesi->started_at && now() >= $sesi->started_at)
-                                @if ($sesi->ended_at && now() >= $sesi->ended_at)
-                                    <span class="badge bg-secondary">Selesai</span>
-                                @else
-                                    <span class="badge bg-success">Dimulai</span>
-                                @endif
-                            @elseif ($sesi->started_at)
-                                <span class="badge bg-warning text-dark">Akan Datang</span>
-                            @else
-                                <span class="badge bg-info">Belum Dimulai (Admin belum mengatur waktu)</span>
-                            @endif
-                        </p>
-
-                        @if ($sesi->started_at && now() >= $sesi->started_at)
-                            <p>Waktu Mulai: {{ $sesi->started_at->format('d M Y, H:i') }}</p>
-
-                            {{-- Mandiri Absen Form --}}
-                            @if ($sesi->type === 'mulai' || $sesi->type === 'selesai') {{-- Allow attendance for both types if started --}}
-                                @php
-                                    // Check if attendance is already recorded for this user and session
-                                    $attendance = \App\Models\Absensi::where('user_id', Auth::id())
-                                                                    ->where('absensi_sesi_id', $sesi->id)
-                                                                    ->first();
-                                @endphp
-                                @if (!$attendance)
-                                    <form action="{{ route('anggota.absensi.absen', $kegiatan) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <input type="hidden" name="method" value="mandiri">
-                                        <input type="hidden" name="session_id" value="{{ $sesi->id }}">
-                                        <button type="submit" class="btn btn-primary btn-sm">
-                                            Absen {{ ucfirst($sesi->type) }} (Mandiri)
-                                        </button>
-                                    </form>
-                                @else
-                                    <span class="badge bg-success">Sudah Absen</span>
-                                @endif
-                            @endif
-                        @endif
+<div class="row">
+    <!-- Sesi Mulai -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden text-center p-4">
+            <h6 class="text-muted fw-bold mb-4">SESI MULAI</h6>
+            
+            @if($absen_mulai)
+                <div class="py-4">
+                    <div class="bg-success-subtle text-success d-inline-block rounded-circle p-4 mb-3">
+                        <i class="fas fa-check-circle fa-4x"></i>
                     </div>
-                @endforeach
+                    <h5 class="fw-bold text-success">Berhasil Absen!</h5>
+                    <p class="text-muted small mb-0">Waktu: {{ $absen_mulai->waktu_absen }}</p>
+                    <p class="text-muted small">Metode: <span class="badge bg-success-subtle">{{ ucfirst($absen_mulai->metode) }}</span></p>
+                </div>
+            @elseif($sesi_mulai && $sesi_mulai->status_sesi == 'berlangsung')
+                <div class="py-4">
+                    @if($sesi_mulai->metode == 'mandiri')
+                        <div class="bg-primary-subtle text-primary d-inline-block rounded-circle p-4 mb-3">
+                            <i class="fas fa-hand-pointer fa-4x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Klik untuk Absen</h5>
+                        <form action="{{ route('anggota.absensi.submit', $kegiatan->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="tipe_sesi" value="mulai">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 rounded-3 fw-bold shadow">
+                                ABSEN SEKARANG
+                            </button>
+                        </form>
+                    @else
+                        <div class="bg-primary text-white d-inline-block rounded-circle p-4 mb-3">
+                            <i class="fas fa-qrcode fa-4x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Scan QR Code Anda</h5>
+                        <p class="text-muted small mb-4">Tunjukkan QR Code Anda ke Scanner Admin/Sekretaris.</p>
+                        <a href="{{ route('anggota.absensi.qr', $kegiatan->id) }}" class="btn btn-primary btn-lg px-5 rounded-3 fw-bold shadow">
+                            TAMPILKAN QR
+                        </a>
+                    @endif
+                </div>
+            @else
+                <div class="py-5 opacity-50">
+                    <i class="fas fa-clock fa-4x text-muted mb-3"></i>
+                    <h6 class="text-muted">Sesi belum tersedia atau sudah ditutup.</h6>
+                </div>
             @endif
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            Opsi Lainnya
-        </div>
-        <div class="card-body">
-            {{-- QR Code Button --}}
-            <a href="{{ route('anggota.absensi.qr', $kegiatan) }}" class="btn btn-secondary">
-                Lihat QR Code Saya
-            </a>
-            <small class="text-muted ms-2">(Untuk ditunjukkan kepada admin)</small>
+    <!-- Sesi Selesai -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden text-center p-4">
+            <h6 class="text-muted fw-bold mb-4">SESI SELESAI</h6>
+            
+            @if($absen_selesai)
+                <div class="py-4">
+                    <div class="bg-success-subtle text-success d-inline-block rounded-circle p-4 mb-3">
+                        <i class="fas fa-check-double fa-4x"></i>
+                    </div>
+                    <h5 class="fw-bold text-success">Berhasil Absen!</h5>
+                    <p class="text-muted small mb-0">Waktu: {{ $absen_selesai->waktu_absen }}</p>
+                    <p class="text-muted small">Metode: <span class="badge bg-success-subtle">{{ ucfirst($absen_selesai->metode) }}</span></p>
+                </div>
+            @elseif($sesi_selesai && $sesi_selesai->status_sesi == 'berlangsung')
+                <div class="py-4">
+                    @if($sesi_selesai->metode == 'mandiri')
+                        <div class="bg-info-subtle text-info d-inline-block rounded-circle p-4 mb-3">
+                            <i class="fas fa-hand-pointer fa-4x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3 text-info">Klik untuk Absen</h5>
+                        <form action="{{ route('anggota.absensi.submit', $kegiatan->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="tipe_sesi" value="selesai">
+                            <button type="submit" class="btn btn-info btn-lg px-5 rounded-3 fw-bold shadow text-white">
+                                ABSEN SEKARANG
+                            </button>
+                        </form>
+                    @else
+                        <div class="bg-info text-white d-inline-block rounded-circle p-4 mb-3">
+                            <i class="fas fa-qrcode fa-4x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3 text-info">Scan QR Code Anda</h5>
+                        <p class="text-muted small mb-4">Tunjukkan QR Code Anda ke Scanner Admin/Sekretaris.</p>
+                        <a href="{{ route('anggota.absensi.qr', $kegiatan->id) }}" class="btn btn-info btn-lg px-5 rounded-3 fw-bold shadow text-white">
+                            TAMPILKAN QR
+                        </a>
+                    @endif
+                </div>
+            @else
+                <div class="py-5 opacity-50">
+                    <i class="fas fa-clock fa-4x text-muted mb-3"></i>
+                    <h6 class="text-muted">Sesi belum tersedia atau sudah ditutup.</h6>
+                </div>
+            @endif
         </div>
     </div>
 </div>

@@ -1,70 +1,65 @@
 @extends('layouts.app')
 
-@section('title', 'Undang Anggota - ' . $kegiatan->nama_kegiatan)
-
 @section('content')
-<div class="container">
-    <h1 class="mt-4 mb-3">Undang Anggota ke Kegiatan: "{{ $kegiatan->nama_kegiatan }}"</h1>
-
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Invite Anggota</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('absensi.index') }}">Pilih Kegiatan</a></li>
+        <li class="breadcrumb-item active">Invite: {{ $kegiatan->nama_kegiatan }}</li>
+    </ol>
 
     <div class="card mb-4">
         <div class="card-header">
-            <i class="fas fa-user-plus me-1"></i>
-            Pilih Anggota untuk Diundang
+            <i class="fas fa-users me-1"></i>
+            Daftar Anggota Aktif
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.absensi.storeInvite', $kegiatan->id) }}" method="POST">
+            <form action="{{ route('absensi.store-invite', $kegiatan->id) }}" method="POST">
                 @csrf
-                
                 <div class="mb-3">
-                    <label class="form-label">Anggota yang Tersedia:</label><br>
-                    @if($members->isEmpty())
-                        <p>Tidak ada anggota lain yang tersedia untuk diundang.</p>
-                    @else
-                        @foreach ($members as $member)
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="member_ids[]" id="member{{ $member->id }}" value="{{ $member->id }}">
-                                <label class="form-check-label" for="member{{ $member->id }}">
-                                    {{ $member->name }} ({{ $member->email }})
-                                </label>
-                            </div>
-                            <br> {{-- Add a line break for better readability, especially with many members --}}
-                        @endforeach
-                    @endif
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="selectAll()">Pilih Semua</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll()">Hapus Semua</button>
                 </div>
-
-                @if(!$members->isEmpty())
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Undang Anggota Terpilih</button>
-                    </div>
-                @endif
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th width="50">Pilih</th>
+                                <th>Nama</th>
+                                <th>Divisi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($anggota as $user)
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" name="user_ids[]" value="{{ $user->id }}" 
+                                    class="form-check-input member-checkbox"
+                                    {{ in_array($user->id, $invited_ids) ? 'checked' : '' }}>
+                                </td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->divisi }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Simpan Daftar Invite</button>
+                    <a href="{{ route('absensi.index') }}" class="btn btn-secondary">Batal</a>
+                </div>
             </form>
         </div>
     </div>
-
-    {{-- Optional: Link back to session management --}}
-    <div class="mb-4">
-        <a href="{{ route('admin.absensi.sesi', $kegiatan->id) }}" class="btn btn-secondary">Kembali ke Kelola Sesi</a>
-    </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
-    // Optional: Add any necessary JavaScript here
+function selectAll() {
+    document.querySelectorAll('.member-checkbox').forEach(cb => cb.checked = true);
+}
+function deselectAll() {
+    document.querySelectorAll('.member-checkbox').forEach(cb => cb.checked = false);
+}
 </script>
-@endpush
+@endsection
