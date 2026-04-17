@@ -209,7 +209,34 @@
                     Lupa password? <span style="color: var(--primary-color); font-weight: 600;">Reset di sini</span>
                 </a>
             </form>
+                </div>
+            </form>
         </div>
     </div>
+    
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            let icon = null;
+            const nextSibling = input.nextElementSibling;
+            if (nextSibling && nextSibling.tagName === 'SPAN' && nextSibling.querySelector('i')) {
+                icon = nextSibling.querySelector('i');
+            } else if (input.parentElement) {
+                icon = input.parentElement.querySelector('i');
+            }
+            if (!icon) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>

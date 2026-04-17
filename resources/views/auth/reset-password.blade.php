@@ -141,9 +141,15 @@
         function togglePassword(inputId) {
             const input = document.getElementById(inputId);
             if (!input) return;
-            const icon = input.parentElement.querySelector('i');
+            let icon = null;
+            const nextSibling = input.nextElementSibling;
+            if (nextSibling && nextSibling.tagName === 'SPAN' && nextSibling.querySelector('i')) {
+                icon = nextSibling.querySelector('i');
+            } else if (input.parentElement) {
+                icon = input.parentElement.querySelector('i');
+            }
             if (!icon) return;
-            
+
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.classList.remove('fa-eye');

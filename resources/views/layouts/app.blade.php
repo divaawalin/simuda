@@ -398,9 +398,17 @@
         window.togglePassword = function(inputId) {
             const input = document.getElementById(inputId);
             if (!input) return;
-            const icon = input.parentElement.querySelector('i');
+            let icon = null;
+            // Try to find the icon in the immediate next sibling span of the input
+            const nextSibling = input.nextElementSibling;
+            if (nextSibling && nextSibling.tagName === 'SPAN' && nextSibling.querySelector('i')) {
+                icon = nextSibling.querySelector('i');
+            } else if (input.parentElement) {
+                // Fallback: search for any i within the parent container
+                icon = input.parentElement.querySelector('i');
+            }
             if (!icon) return;
-            
+
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.classList.remove('fa-eye');
