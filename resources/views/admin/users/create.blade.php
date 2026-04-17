@@ -64,7 +64,12 @@
 
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+            <div class="position-relative">
+                <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password')">
+                    <i class="fas fa-eye text-muted"></i>
+                </span>
+            </div>
             @error('password')
                 <div style="color: red; font-size: 12px;">{{ $message }}</div>
             @enderror
@@ -72,7 +77,12 @@
 
         <div class="form-group">
             <label for="password_confirmation">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+            <div class="position-relative">
+                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password_confirmation')">
+                    <i class="fas fa-eye text-muted"></i>
+                </span>
+            </div>
         </div>
 
         <div class="form-group">

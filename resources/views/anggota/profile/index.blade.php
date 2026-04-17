@@ -104,15 +104,30 @@
                     
                     <div class="mb-3">
                         <label for="current_password" class="form-label">Password Saat Ini</label>
-                        <input type="password" class="form-control rounded-3" id="current_password" name="current_password" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control rounded-3" id="current_password" name="current_password" required>
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('current_password')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="password_baru" class="form-label">Password Baru</label>
-                        <input type="password" class="form-control rounded-3" id="password_baru" name="password_baru" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control rounded-3" id="password_baru" name="password_baru" required>
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password_baru')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label for="konfirmasi_password" class="form-label">Konfirmasi Password Baru</label>
-                        <input type="password" class="form-control rounded-3" id="konfirmasi_password" name="konfirmasi_password" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control rounded-3" id="konfirmasi_password" name="konfirmasi_password" required>
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('konfirmasi_password')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
                     </div>
                     
                     <div class="d-grid">

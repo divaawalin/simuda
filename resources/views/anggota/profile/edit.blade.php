@@ -108,7 +108,12 @@
                 <div class="row mb-3">
                     <label for="current_password" class="col-md-4 col-form-label text-md-end">Kata Sandi Saat Ini</label>
                     <div class="col-md-6">
-                        <input id="current_password" type="password" class="form-control @error('current_password') is-invalid @enderror" name="current_password" required autocomplete="current-password">
+                        <div class="position-relative">
+                            <input id="current_password" type="password" class="form-control @error('current_password') is-invalid @enderror" name="current_password" required autocomplete="current-password">
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('current_password')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
                         @error('current_password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -120,7 +125,12 @@
                 <div class="row mb-3">
                     <label for="password" class="col-md-4 col-form-label text-md-end">Kata Sandi Baru</label>
                     <div class="col-md-6">
-                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                        <div class="position-relative">
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
                         @error('password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -132,7 +142,12 @@
                 <div class="row mb-3">
                     <label for="password_confirmation" class="col-md-4 col-form-label text-md-end">Konfirmasi Kata Sandi Baru</label>
                     <div class="col-md-6">
-                        <input id="password_confirmation" type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password">
+                        <div class="position-relative">
+                            <input id="password_confirmation" type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password">
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password_confirmation')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
                         @error('password_confirmation')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>

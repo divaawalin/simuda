@@ -181,7 +181,12 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <label for="password" class="form-label mb-0">Password</label>
                     </div>
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="••••••••">
+                    <div class="position-relative">
+                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="••••••••">
+                        <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password')">
+                            <i class="fas fa-eye text-muted"></i>
+                        </span>
+                    </div>
                     @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

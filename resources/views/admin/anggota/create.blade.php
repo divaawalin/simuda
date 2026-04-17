@@ -47,7 +47,12 @@
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+                <div class="position-relative">
+                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+                    <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password')">
+                        <i class="fas fa-eye text-muted"></i>
+                    </span>
+                </div>
                 @error('password')
                     <span style="color: #e74c3c; font-size: 12px;">{{ $message }}</span>
                 @enderror
