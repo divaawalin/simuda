@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/absensi/{kegiatan_id}/qr', [AbsensiController::class, 'qr'])->name('absensi.qr');
         Route::post('/absensi/{kegiatan_id}/scan', [AbsensiController::class, 'scan'])->name('absensi.scan');
         Route::get('/absensi/{kegiatan_id}/rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
+        Route::get('/absensi/rekap-global', [AbsensiController::class, 'rekapGlobal'])->name('absensi.rekapGlobal');
 
         // Manajemen User Admin
         Route::resource('/users', UserAdminController::class);
