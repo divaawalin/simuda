@@ -1,14 +1,21 @@
 @extends('layouts.app')
 
+@section('page-title', 'Tambah User Admin')
+
 @section('content')
-<div class="main-container">
-    <!-- Breadcrumb-like navigation -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('users.index') }}">Users Admin</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Tambah User Baru</li>
-        </ol>
-    </nav>
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon"><i class="fas fa-user-shield"></i></div>
+                <div>
+                    <h4 class="fw-bold">Tambah User Admin</h4>
+                    <p>Buat akun admin, sekretaris, atau ketua dengan profil dan role yang tepat.</p>
+                </div>
+            </div>
+            <a href="{{ route('users.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+        </div>
+    </div>
 
     <div class="card border-0 shadow-sm">
         <div class="card-header">
@@ -197,7 +204,7 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     function previewImage(input) {
         const preview = document.getElementById('photo-preview');
@@ -234,4 +241,4 @@
     password.addEventListener('change', validatePassword);
     confirmPassword.addEventListener('keyup', validatePassword);
 </script>
-@endsection
+@endpush

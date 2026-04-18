@@ -3,17 +3,14 @@
 @section('page-title', 'Kelola Sesi Absensi')
 
 @section('content')
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm p-4 bg-white">
-            <div class="d-flex align-items-center">
-                <div class="bg-primary-subtle p-3 rounded-4 text-primary me-4">
-                    <i class="fas fa-calendar-check fa-2x"></i>
-                </div>
-                <div>
-                    <h4 class="fw-800 mb-1 text-primary">{{ $kegiatan->nama_kegiatan }}</h4>
-                    <p class="mb-0 text-muted"><i class="fas fa-map-marker-alt me-1"></i> {{ $kegiatan->lokasi }} | <i class="fas fa-calendar-day me-1 ms-2"></i> {{ $kegiatan->tanggal }}</p>
-                </div>
+<div class="container-fluid px-0">
+<div class="page-banner mb-4">
+    <div class="page-banner-content">
+        <div class="page-banner-copy">
+            <div class="page-banner-icon"><i class="fas fa-sliders"></i></div>
+            <div>
+                <h4 class="fw-bold">{{ $kegiatan->nama_kegiatan }}</h4>
+                <p><i class="fas fa-map-marker-alt me-1"></i>{{ $kegiatan->lokasi }} <span class="mx-2">•</span> <i class="fas fa-calendar-day me-1"></i>{{ $kegiatan->tanggal }}</p>
             </div>
         </div>
     </div>
@@ -261,5 +258,6 @@
             <i class="fas fa-list-alt me-2"></i> LIHAT REKAP KEHADIRAN
         </a>
     </div>
+</div>
 </div>
 @endsection

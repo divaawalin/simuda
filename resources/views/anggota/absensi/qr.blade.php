@@ -4,15 +4,14 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Header Section -->
-    <div class="card border-0 shadow-sm p-4 mb-4 rounded-4" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
-        <div class="d-flex align-items-center">
-            <div class="text-white p-3 rounded-4 me-4" style="background-color: rgba(255, 255, 255, 0.15);">
-                <i class="fas fa-qrcode fa-2x"></i>
-            </div>
-            <div>
-                <h4 class="fw-bold text-white mb-1">QR Code Absensi</h4>
-                <p class="text-white-50 small mb-0">Tunjukkan QR Code ini untuk keperluan absensi.</p>
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon"><i class="fas fa-qrcode"></i></div>
+                <div>
+                    <h4 class="fw-bold">QR Code Absensi</h4>
+                    <p>Tunjukkan QR Code ini saat proses absensi berlangsung.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -43,4 +42,3 @@
     </div>
 </div>
 @endsection
-

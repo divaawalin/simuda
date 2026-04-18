@@ -1,14 +1,21 @@
 @extends('layouts.app')
 
+@section('page-title', 'Edit Kegiatan')
+
 @section('content')
-<div class="main-container">
-    <!-- Breadcrumb-like navigation -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('kegiatan.index') }}">Daftar Kegiatan</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit Kegiatan</li>
-        </ol>
-    </nav>
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon"><i class="fas fa-pen-ruler"></i></div>
+                <div>
+                    <h4 class="fw-bold">Edit Kegiatan</h4>
+                    <p>Perbarui agenda <strong>{{ $kegiatan->nama_kegiatan }}</strong> tanpa kehilangan struktur data yang sudah ada.</p>
+                </div>
+            </div>
+            <a href="{{ route('kegiatan.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+        </div>
+    </div>
 
     <div class="card border-0 shadow-sm">
         <div class="card-header">

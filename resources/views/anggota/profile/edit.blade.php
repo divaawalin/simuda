@@ -1,7 +1,20 @@
 @extends('layouts.app')
 
+@section('page-title', 'Edit Profil Anggota')
+
 @section('content')
-<div class="main-container">
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon"><i class="fas fa-user-pen"></i></div>
+                <div>
+                    <h4 class="fw-bold">Edit Profil Anggota</h4>
+                    <p>Perbarui data pribadi, foto, dan keamanan akun Anda dari halaman edit khusus.</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row g-4">
         <!-- Profile Photo Card -->
         <div class="col-lg-4">
@@ -183,7 +196,7 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     function previewImage(event) {
         const reader = new FileReader();
@@ -206,4 +219,4 @@
         reader.readAsDataURL(event.target.files[0]);
     }
 </script>
-@endsection
+@endpush

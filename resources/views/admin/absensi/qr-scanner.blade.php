@@ -3,6 +3,19 @@
 @section('page-title', 'Scanner Absensi Anggota')
 
 @section('content')
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon"><i class="fas fa-qrcode"></i></div>
+                <div>
+                    <h4 class="fw-bold">Scanner Absensi Anggota</h4>
+                    <p>Gunakan kamera untuk membaca QR anggota pada kegiatan <strong>{{ $kegiatan->nama_kegiatan }}</strong>.</p>
+                </div>
+            </div>
+            <a href="{{ route('absensi.sesi', $kegiatan->id) }}" class="btn btn-light px-4"><i class="fas fa-times me-2"></i>Tutup</a>
+        </div>
+    </div>
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
@@ -33,6 +46,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

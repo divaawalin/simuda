@@ -3,7 +3,19 @@
 @section('page-title', 'Edit Konten')
 
 @section('content')
-<div class="main-container">
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon"><i class="fas fa-pen-to-square"></i></div>
+                <div>
+                    <h4 class="fw-bold">Edit Konten</h4>
+                    <p>Perbarui metadata, tipe, dan sumber konten <strong>{{ $konten->nama_konten }}</strong>.</p>
+                </div>
+            </div>
+            <a href="{{ route('konten.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">

@@ -1,14 +1,21 @@
 @extends('layouts.app')
 
+@section('page-title', 'Tambah Anggota')
+
 @section('content')
-<div class="main-container">
-    <!-- Breadcrumb-like navigation -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('anggota.index') }}">Daftar Anggota</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Tambah Anggota Baru</li>
-        </ol>
-    </nav>
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon"><i class="fas fa-user-plus"></i></div>
+                <div>
+                    <h4 class="fw-bold">Tambah Anggota Baru</h4>
+                    <p>Buat profil anggota lengkap dengan identitas, kontak, dan foto agar direktori organisasi tetap rapi.</p>
+                </div>
+            </div>
+            <a href="{{ route('anggota.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+        </div>
+    </div>
 
     <div class="card border-0 shadow-sm">
         <div class="card-header">
@@ -178,7 +185,7 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     function previewImage(input) {
         const preview = document.getElementById('photo-preview');
@@ -215,4 +222,4 @@
     password.addEventListener('change', validatePassword);
     confirmPassword.addEventListener('keyup', validatePassword);
 </script>
-@endsection
+@endpush
