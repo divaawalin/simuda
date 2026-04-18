@@ -4,22 +4,48 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Header Section -->
-    <div class="card border-0 shadow-sm p-4 mb-4 rounded-4" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
-        <div class="d-flex align-items-center">
-            <div class="text-white p-3 rounded-4 me-4" style="background-color: rgba(255, 255, 255, 0.15);">
-                <i class="fas fa-calendar-check fa-2x"></i>
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-fingerprint"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1">{{ $kegiatan->nama_kegiatan }}</h4>
+                    <p><i class="fas fa-map-marker-alt me-1"></i>{{ $kegiatan->lokasi }} <span class="mx-2">•</span> <i class="fas fa-calendar-day me-1"></i>{{ $kegiatan->tanggal }}</p>
+                </div>
             </div>
-            <div>
-                <h4 class="fw-bold text-white mb-1">{{ $kegiatan->nama_kegiatan }}</h4>
-                <p class="text-white-50 small mb-0"><i class="fas fa-map-marker-alt me-1"></i> {{ $kegiatan->lokasi }} | <i class="fas fa-calendar-day me-1 ms-2"></i> {{ $kegiatan->tanggal }}</p>
+            <a href="{{ route('anggota.absensi.index') }}" class="btn btn-light px-4">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="card border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase fw-bold text-muted d-block mb-2">Status Kegiatan</small>
+                    <span class="badge rounded-pill px-3 py-2" style="background:rgba(4,142,142,.12);color:var(--primary-color);">{{ ucfirst($kegiatan->status) }}</span>
+                    <hr>
+                    <small class="text-uppercase fw-bold text-muted d-block mb-2">Panduan</small>
+                    <p class="text-muted small mb-0">Gunakan panel sesi mulai dan sesi selesai di bawah untuk melihat apakah Anda perlu scan QR atau melakukan absensi mandiri.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6"><div class="soft-card p-3 h-100"><small class="text-uppercase fw-bold text-muted d-block mb-2">Sesi Mulai</small><strong>{{ $absen_mulai ? 'Sudah Tercatat' : (($sesi_mulai && $sesi_mulai->status_sesi == 'berlangsung') ? 'Sedang Tersedia' : 'Belum Tersedia') }}</strong></div></div>
+                        <div class="col-md-6"><div class="soft-card p-3 h-100"><small class="text-uppercase fw-bold text-muted d-block mb-2">Sesi Selesai</small><strong>{{ $absen_selesai ? 'Sudah Tercatat' : (($sesi_selesai && $sesi_selesai->status_sesi == 'berlangsung') ? 'Sedang Tersedia' : 'Belum Tersedia') }}</strong></div></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Session Cards -->
     <div class="row g-4">
-        <!-- Sesi Mulai -->
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100 rounded-4 p-4 text-center">
                 <h6 class="text-muted fw-bold mb-4">SESI MULAI</h6>
@@ -67,7 +93,6 @@
             </div>
         </div>
 
-        <!-- Sesi Selesai -->
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100 rounded-4 p-4 text-center">
                 <h6 class="text-muted fw-bold mb-4">SESI SELESAI</h6>

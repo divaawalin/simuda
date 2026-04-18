@@ -4,17 +4,19 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Welcome Banner with Glassmorphism -->
-    <div class="card border-0 shadow-sm mb-4 position-relative overflow-hidden" 
-         style="background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%); border-radius: 20px;">
-        <div class="position-absolute top-0 end-0 p-4 opacity-10">
-            <i class="fas fa-fingerprint fa-10x text-white"></i>
-        </div>
-        <div class="card-body p-4 p-md-5 text-white">
-            <h1 class="fw-bold mb-2">Halo, {{ auth()->user()->name }}!</h1>
-            <p class="mb-4 opacity-75">Selamat datang di portal anggota {{ config('app.name') }}. Pantau kegiatan dan lakukan absensi di sini.</p>
-            <div class="d-flex gap-3">
-                <div class="bg-white bg-opacity-10 px-3 py-2 rounded-pill backdrop-blur"><i class="fas fa-calendar-day me-2"></i> {{ now()->format('d F Y') }}</div>
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1">Portal Anggota</h4>
+                    <p>Halo, {{ auth()->user()->name }}. Akses kegiatan, absensi, dan materi admin dari satu dashboard yang lebih fokus.</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="badge rounded-pill px-3 py-2 text-white border border-light-subtle">{{ now()->translatedFormat('d F Y') }}</span>
             </div>
         </div>
     </div>
@@ -42,8 +44,10 @@
         @endforeach
     </div>
 
-    <!-- Kegiatan -->
-    <h5 class="fw-bold mb-4 text-dark"><i class="fas fa-calendar-week me-2" style="color: var(--primary-color);"></i>Kegiatan Anda</h5>
+    <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
+        <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-calendar-week me-2" style="color: var(--primary-color);"></i>Kegiatan Anda</h5>
+        <a href="{{ route('anggota.absensi.index') }}" class="btn btn-outline-primary px-4">Lihat Semua</a>
+    </div>
     <div class="row g-4">
         @forelse($kegiatans as $kegiatan)
         <div class="col-xl-4 col-md-6">
@@ -77,9 +81,7 @@
         <h5 class="fw-bold mb-0 text-dark">
             <i class="fas fa-folder-open me-2" style="color: var(--secondary-color);"></i>Konten Dari Admin
         </h5>
-        <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(95, 198, 215, 0.16); color: var(--secondary-color);">
-            {{ $konten->count() }} Konten
-        </span>
+        <a href="{{ route('anggota.konten.index') }}" class="btn btn-outline-primary px-4">Buka Library</a>
     </div>
     <div class="row g-4">
         @forelse($konten as $item)
