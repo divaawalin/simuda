@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page-title', 'Edit Konten')
+
 @section('content')
 <div class="main-container">
     <div class="row justify-content-center">
@@ -51,16 +53,34 @@
                             </div>
                         </div>
 
-                        <div id="fileUploadSection" class="mb-4" style="display: none;">
-                            <label for="file_konten" class="form-label fw-semibold">Unggah File Baru (Opsional)</label>
-                            <input type="file" name="file_konten" id="file_konten" class="form-control @error('file_konten') is-invalid @enderror">
-                            <small class="text-muted d-block mt-1">Kosongkan jika tidak ingin mengganti file.</small>
-                            @if($konten->file_path)
+                        <div id="imageUploadSection" class="mb-4" style="display: none;">
+                            <label for="file_konten" class="form-label fw-semibold">Ganti Gambar (Opsional)</label>
+                            <input type="file" name="gambar_konten" id="gambar_konten" 
+                                   class="form-control @error('gambar_konten') is-invalid @enderror"
+                                   accept="image/*">
+                            <small class="text-muted d-block mt-1">Kosongkan jika tidak ingin mengganti gambar.</small>
+                            @if($konten->file_path && $konten->tipe === 'gambar')
                                 <small class="text-muted d-block mt-2">
-                                    <i class="fas fa-paperclip me-1"></i> File saat ini: {{ basename($konten->file_path) }}
+                                    <i class="fas fa-image me-1"></i> Gambar saat ini: {{ basename($konten->file_path) }}
                                 </small>
                             @endif
-                            @error('file_konten')
+                            @error('gambar_konten')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div id="documentUploadSection" class="mb-4" style="display: none;">
+                            <label for="file_konten_doc" class="form-label fw-semibold">Ganti File (Opsional)</label>
+                            <input type="file" name="dokumen_konten" id="dokumen_konten" 
+                                   class="form-control @error('dokumen_konten') is-invalid @enderror"
+                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt">
+                            <small class="text-muted d-block mt-1">Kosongkan jika tidak ingin mengganti file.</small>
+                            @if($konten->file_path && $konten->tipe === 'file')
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-file me-1"></i> File saat ini: {{ basename($konten->file_path) }}
+                                </small>
+                            @endif
+                            @error('dokumen_konten')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
@@ -97,41 +117,54 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
     const tipeSelect = document.getElementById('tipe');
-    const fileUploadSection = document.getElementById('fileUploadSection');
+    const imageUploadSection = document.getElementById('imageUploadSection');
+    const documentUploadSection = document.getElementById('documentUploadSection');
     const linkUrlSection = document.getElementById('linkUrlSection');
-    const fileInput = document.getElementById('file_konten');
+    const imageFileInput = document.getElementById('gambar_konten');
+    const docFileInput = document.getElementById('dokumen_konten');
     const linkInput = document.getElementById('link_url');
+
+    if (!tipeSelect) {
+        return;
+    }
 
     function toggleInputSections() {
         const selectedTipe = tipeSelect.value;
 
-        if (selectedTipe === 'gambar' || selectedTipe === 'file') {
-            fileUploadSection.style.display = 'block';
-            linkUrlSection.style.display = 'none';
+        imageUploadSection.style.display = 'none';
+        documentUploadSection.style.display = 'none';
+        linkUrlSection.style.display = 'none';
+
+        imageFileInput.required = false;
+        docFileInput.required = false;
+        linkInput.required = false;
+
+        if (selectedTipe === 'gambar') {
+            imageUploadSection.style.display = 'block';
+            docFileInput.value = '';
             linkInput.value = '';
-            fileInput.required = false; // Optional for edit
-            linkInput.required = false;
+        } else if (selectedTipe === 'file') {
+            documentUploadSection.style.display = 'block';
+            imageFileInput.value = '';
+            linkInput.value = '';
         } else if (selectedTipe === 'link') {
-            fileUploadSection.style.display = 'none';
             linkUrlSection.style.display = 'block';
-            fileInput.value = '';
-            fileInput.required = false;
             linkInput.required = true;
+            imageFileInput.value = '';
+            docFileInput.value = '';
         } else {
-            fileUploadSection.style.display = 'none';
-            linkUrlSection.style.display = 'none';
-            fileInput.value = '';
+            imageFileInput.value = '';
+            docFileInput.value = '';
             linkInput.value = '';
-            fileInput.required = false;
-            linkInput.required = false;
         }
     }
 
-    document.addEventListener('DOMContentLoaded', toggleInputSections);
+    toggleInputSections();
     tipeSelect.addEventListener('change', toggleInputSections);
+});
 </script>
-@endsection
-
+@endpush
