@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Anggota\AbsensiController as AnggotaAbsensiController;
 use App\Http\Controllers\Anggota\AnggotaDashboardController;
+use App\Http\Controllers\Anggota\KontenController as AnggotaKontenController;
 use App\Http\Controllers\Anggota\ProfileController as AnggotaProfileController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\File;
@@ -76,6 +77,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/absensi/{kegiatan_id}/qr', [AnggotaAbsensiController::class, 'qr'])->name('anggota.absensi.qr');
         Route::post('/absensi/{kegiatan_id}/absen', [AnggotaAbsensiController::class, 'absen'])->name('anggota.absensi.submit');
 
+        // Konten Anggota
+        Route::get('/konten', [AnggotaKontenController::class, 'index'])->name('anggota.konten.index');
+
         // Profile
         Route::get('/profile', [AnggotaProfileController::class, 'index'])->name('anggota.profile');
         Route::put('/profile', [AnggotaProfileController::class, 'update'])->name('anggota.profile.update');
@@ -105,4 +109,3 @@ Route::get('/storage/konten/{filename}', function ($filename) {
 
     return response($file, 200)->header('Content-Type', $type);
 })->name('storage.konten');
-

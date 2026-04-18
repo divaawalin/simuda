@@ -1245,7 +1245,10 @@
                      <li class="{{ request()->routeIs('anggota.absensi.*') ? 'active' : '' }}">
                          <a href="{{ route('anggota.absensi.index') }}"><i class="fas fa-fingerprint me-2"></i> Absensi</a>
                      </li>
-                     <li class="{{ request()->routeIs('anggota.profile') ? 'active' : '' }}">
+                     <li class="{{ request()->routeIs('anggota.konten.*') ? 'active' : '' }}">
+                         <a href="{{ route('anggota.konten.index') }}"><i class="fas fa-layer-group me-2"></i> Konten</a>
+                     </li>
+                     <li class="{{ request()->routeIs('anggota.profile*') ? 'active' : '' }}">
                          <a href="{{ route('anggota.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
                      </li>
                  @endif
@@ -1303,7 +1306,7 @@
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('admin.profile', ['user' => auth()->user()->id]) }}">
+                                        <a class="dropdown-item" href="{{ auth()->user()->role === 'anggota' ? route('anggota.profile') : route('admin.profile') }}">
                                             <i class="fas fa-user-circle"></i> My Profile
                                         </a>
                                     </li>
