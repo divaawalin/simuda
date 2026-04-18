@@ -104,7 +104,7 @@ class DatabaseSeeder extends Seeder
             $kegiatans->push(Kegiatan::create([
                 'nama_kegiatan' => 'Kegiatan ' . $k . ': ' . Str::title(Str::random(10)),
                 'deskripsi' => 'Deskripsi untuk kegiatan ' . $k . '.',
-                'tanggal_keg' => $kegiatanDate->toDateString(),
+                'tanggal' => $kegiatanDate->toDateString(),
                 'waktu_mulai' => '08:00:00',
                 'waktu_selesai' => '12:00:00',
                 'lokasi' => 'Lokasi Kegiatan ' . $k,
