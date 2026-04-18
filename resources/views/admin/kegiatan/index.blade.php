@@ -4,18 +4,34 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold mb-1 text-dark">Manajemen Kegiatan</h4>
-            <p class="text-muted small mb-0">Kelola dan pantau seluruh agenda organisasi Anda.</p>
+    @php
+        $aktifCount = $kegiatans->where('status', 'aktif')->count();
+        $selesaiCount = $kegiatans->where('status', 'selesai')->count();
+    @endphp
+
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-calendar-days"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold">Arsitektur Agenda</h4>
+                    <p>Kelola ritme kegiatan organisasi, status pelaksanaan, dan detail lokasi dalam satu halaman editorial.</p>
+                </div>
+            </div>
+            <a href="{{ route('kegiatan.create') }}" class="btn btn-light px-4">
+                <i class="fas fa-plus me-2"></i>Tambah Baru
+            </a>
         </div>
-        <a href="{{ route('kegiatan.create') }}" class="btn text-white rounded-3 px-4 shadow-sm" style="background-color: var(--primary-color);">
-            <i class="fas fa-plus me-1"></i> Tambah Baru
-        </a>
     </div>
 
-    <!-- Table Card -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Total Agenda</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $kegiatans->count() }}</div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Sedang Aktif</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $aktifCount }}</div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Sudah Selesai</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $selesaiCount }}</div></div></div></div>
+    </div>
+
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">

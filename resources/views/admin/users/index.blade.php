@@ -4,18 +4,35 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold mb-1 text-dark">Manajemen Admin</h4>
-            <p class="text-muted small mb-0">Kelola akses sistem untuk Admin, Sekretaris, dan Ketua.</p>
+    @php
+        $adminOnly = $users->where('role', 'admin')->count();
+        $sekretarisOnly = $users->where('role', 'sekretaris')->count();
+        $ketuaOnly = $users->where('role', 'ketua')->count();
+    @endphp
+
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold">Access Control Room</h4>
+                    <p>Kelola akun dengan hak istimewa dan struktur peran inti organisasi secara lebih terkurasi.</p>
+                </div>
+            </div>
+            <a href="{{ route('users.create') }}" class="btn btn-light px-4 shadow-sm">
+                <i class="fas fa-plus me-2"></i>Tambah Admin
+            </a>
         </div>
-        <a href="{{ route('users.create') }}" class="btn text-white rounded-3 px-4 shadow-sm" style="background-color: var(--primary-color);">
-            <i class="fas fa-user-shield me-1"></i> Tambah Admin
-        </a>
     </div>
 
-    <!-- Table Card -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Admin</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $adminOnly }}</div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Sekretaris</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $sekretarisOnly }}</div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Ketua</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $ketuaOnly }}</div></div></div></div>
+    </div>
+
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">

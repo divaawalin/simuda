@@ -4,18 +4,34 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold mb-1 text-dark">Manajemen Anggota</h4>
-            <p class="text-muted small mb-0">Kelola database keanggotaan organisasi Anda.</p>
+    @php
+        $aktifCount = $anggota->where('status', 'aktif')->count();
+        $divisiCount = $anggota->pluck('divisi')->filter()->unique()->count();
+    @endphp
+
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-users-gear"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold">Directory Anggota</h4>
+                    <p>Kelola status, divisi, kontak, dan identitas anggota dengan tampilan seperti direktori organisasi modern.</p>
+                </div>
+            </div>
+            <a href="{{ route('anggota.create') }}" class="btn btn-light px-4 shadow-sm">
+                <i class="fas fa-user-plus me-2"></i>Tambah Anggota
+            </a>
         </div>
-        <a href="{{ route('anggota.create') }}" class="btn text-white rounded-3 px-4 shadow-sm" style="background-color: var(--primary-color);">
-            <i class="fas fa-user-plus me-1"></i> Tambah Anggota
-        </a>
     </div>
 
-    <!-- Table Card -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Total Anggota</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $anggota->count() }}</div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Status Aktif</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $aktifCount }}</div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Jumlah Divisi</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $divisiCount }}</div></div></div></div>
+    </div>
+
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">
