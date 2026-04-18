@@ -63,6 +63,7 @@
                 </div>
                 @endforelse
             </div>
+            {{ $kegiatans->links() }} {{-- Pagination links --}}
         </div>
         <div class="col-xl-4">
             <div class="card border-0 rounded-4 h-100">

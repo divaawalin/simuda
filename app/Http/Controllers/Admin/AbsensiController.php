@@ -18,9 +18,9 @@ class AbsensiController extends Controller
     /**
      * Step 1 — Pilih Kegiatan
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kegiatans = Kegiatan::latest()->get();
+        $kegiatans = Kegiatan::latest()->paginate(10);
 
         return view('admin.absensi.index', compact('kegiatans'));
     }
@@ -221,31 +221,45 @@ class AbsensiController extends Controller
     /**
      * Rekap absensi kegiatan
      */
-    public function rekap($kegiatan_id, AttendanceService $attendanceService)
+    public function rekap($kegiatan_id, AttendanceService $attendanceService, Request $request)
     {
         $kegiatan = Kegiatan::findOrFail($kegiatan_id);
-        $invited_users = User::whereIn('id', function ($query) use ($kegiatan_id) {
+        // Fetch all invited users first to calculate percentages
+        $all_invited_users = User::whereIn('id', function ($query) use ($kegiatan_id) {
             $query->select('user_id')->from('absensi_invite')->where('kegiatan_id', $kegiatan_id);
         })->get();
 
         $sesi_mulai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'mulai')->first();
         $sesi_selesai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'selesai')->first();
 
-        foreach ($invited_users as $user) {
+        foreach ($all_invited_users as $user) {
             $user->absen_mulai = Absensi::where('absensi_sesi_id', optional($sesi_mulai)->id)
                 ->where('user_id', $user->id)
                 ->first();
 
             $user->absen_selesai = Absensi::where('absensi_sesi_id', optional($sesi_selesai)->id)
-                ->where('user_id', $user->id) // Corrected from user->id to user_id
+                ->where('user_id', $user->id)
                 ->first();
 
             $user->attendance_percentage = $attendanceService->calculateUserActivityAttendancePercentage($user, $kegiatan);
         }
 
-        $totalDiundang = $invited_users->count();
-        $mulaiHadir = $invited_users->filter(fn ($user) => ! is_null($user->absen_mulai))->count();
-        $selesaiHadir = $invited_users->filter(fn ($user) => ! is_null($user->absen_selesai))->count();
+        // Manually paginate the collection after calculations
+        $perPage = 10; // Number of items per page
+        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+        $pagedData = $all_invited_users->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $invited_users = new \Illuminate\Pagination\LengthAwarePaginator(
+            $pagedData,
+            $all_invited_users->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url()]
+        );
+        
+        $totalDiundang = $all_invited_users->count(); // Use count of all invited users for summary stats
+        $mulaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_mulai))->count();
+        $selesaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_selesai))->count();
 
         $persenMulai = $totalDiundang > 0 ? round(($mulaiHadir / $totalDiundang) * 100, 1) : 0;
         $persenSelesai = $totalDiundang > 0 ? round(($selesaiHadir / $totalDiundang) * 100, 1) : 0;
@@ -261,15 +275,15 @@ class AbsensiController extends Controller
         $year = $request->get('year', date('Y'));
         $month = $request->get('month');
 
-        $query = Kegiatan::whereYear('tanggal_keg', $year);
+        $query = Kegiatan::whereYear('tanggal', $year); // Corrected 'tanggal_keg' to 'tanggal'
 
         if ($month) {
-            $query->whereMonth('tanggal_keg', $month);
+            $query->whereMonth('tanggal', $month); // Corrected 'tanggal_keg' to 'tanggal'
         }
 
-        $kegiatans = $query->orderBy('tanggal_keg', 'desc')->get();
+        $kegiatans = $query->orderBy('tanggal', 'desc')->get(); // Corrected 'tanggal_keg' to 'tanggal'
 
-        $data = [];
+        $allRecapData = collect();
         $totalOverallInvited = 0;
         $totalOverallAttended = 0;
 
@@ -286,12 +300,12 @@ class AbsensiController extends Controller
 
             $attendancePercentage = ($totalInvited > 0) ? round(($totalAttended / $totalInvited) * 100, 2) : 0.0;
 
-            $data[] = [
+            $allRecapData->push([
                 'kegiatan' => $kegiatan,
                 'total_invited' => $totalInvited,
                 'total_attended' => $totalAttended,
                 'attendance_percentage' => $attendancePercentage,
-            ];
+            ]);
 
             $totalOverallInvited += $totalInvited;
             $totalOverallAttended += $totalAttended;
@@ -299,7 +313,20 @@ class AbsensiController extends Controller
 
         $overallGlobalPercentage = ($totalOverallInvited > 0) ? round(($totalOverallAttended / $totalOverallInvited) * 100, 2) : 0.0;
 
-        $years = Kegiatan::selectRaw('YEAR(tanggal_keg) as year')->distinct()->pluck('year');
+        $years = Kegiatan::selectRaw('YEAR(tanggal) as year')->distinct()->pluck('year'); // Corrected 'tanggal_keg' to 'tanggal'
+
+        // Manually paginate the collection
+        $perPage = 10; // Number of items per page
+        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+        $pagedData = $allRecapData->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $data = new \Illuminate\Pagination\LengthAwarePaginator(
+            $pagedData,
+            $allRecapData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url()]
+        );
 
         return view('admin.absensi.rekap-global', compact('data', 'year', 'month', 'overallGlobalPercentage', 'years'));
     }

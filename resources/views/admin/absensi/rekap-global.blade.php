@@ -123,6 +123,9 @@
                 </table>
             </div>
         </div>
+        <div class="card-footer bg-white border-0 py-3">
+            {{ $data->links() }}
+        </div>
     </div>
 </div>
 @endsection
@@ -132,8 +135,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Data for Activity Attendance Chart
-        const activityLabels = @json(collect($data)->pluck('kegiatan.nama_kegiatan'));
-        const activityPercentages = @json(collect($data)->pluck('attendance_percentage'));
+        const activityLabels = @json($data->items()->pluck('kegiatan.nama_kegiatan'));
+        const activityPercentages = @json($data->items()->pluck('attendance_percentage'));
 
         const activityCtx = document.getElementById('activityAttendanceChart').getContext('2d');
         const activityAttendanceChart = new Chart(activityCtx, {
