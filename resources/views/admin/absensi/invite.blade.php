@@ -1,28 +1,39 @@
 @extends('layouts.app')
 
+@section('page-title', 'Invite Anggota')
+
 @section('content')
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Invite Anggota</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('absensi.index') }}">Pilih Kegiatan</a></li>
-        <li class="breadcrumb-item active">Invite: {{ $kegiatan->nama_kegiatan }}</li>
-    </ol>
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold">Invite Anggota</h4>
+                    <p>Pilih anggota yang akan diikutsertakan pada kegiatan <strong>{{ $kegiatan->nama_kegiatan }}</strong>.</p>
+                </div>
+            </div>
+            <a href="{{ route('absensi.index') }}" class="btn btn-light px-4 fw-bold">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
+            </a>
+        </div>
+    </div>
 
     <div class="card mb-4">
         <div class="card-header">
-            <i class="fas fa-users me-1"></i>
-            Daftar Anggota Aktif
+            <span><i class="fas fa-users me-2"></i>Daftar Anggota Aktif</span>
         </div>
         <div class="card-body">
             <form action="{{ route('absensi.store-invite', $kegiatan->id) }}" method="POST">
                 @csrf
-                <div class="mb-3">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="selectAll()">Pilih Semua</button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll()">Hapus Semua</button>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectAll()">Pilih Semua</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="deselectAll()">Hapus Semua</button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table align-middle">
                         <thead>
                             <tr>
                                 <th width="50">Pilih</th>
@@ -47,7 +58,7 @@
                 </div>
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">Simpan Daftar Invite</button>
-                    <a href="{{ route('absensi.index') }}" class="btn btn-secondary">Batal</a>
+                    <a href="{{ route('absensi.index') }}" class="btn btn-outline-secondary">Batal</a>
                 </div>
             </form>
         </div>

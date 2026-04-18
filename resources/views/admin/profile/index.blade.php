@@ -4,6 +4,20 @@
 
 @section('content')
 <div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-id-badge"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold">Profil Admin</h4>
+                    <p>Perbarui identitas, kontak, dan keamanan akun Anda dari satu halaman yang lebih tertata.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
         <!-- Profile Photo Card -->
         <div class="col-lg-4">
@@ -11,11 +25,10 @@
                 <div class="card-body">
                     <div class="position-relative d-inline-block mb-4">
                         @if($user->foto_profile)
-                            <img src="{{ route('storage.profiles', $user->foto_profile) }}" class="rounded-circle shadow-sm" 
-                                 alt="Profile" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid var(--primary-color);">
+                            <img src="{{ route('storage.profiles', $user->foto_profile) }}" class="avatar-display"
+                                 alt="Profile">
                         @else
-                            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto" 
-                                 style="width: 150px; height: 150px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; font-size: 4rem; font-weight: 800;">
+                            <div class="avatar-placeholder-lg mx-auto">
                                 {{ substr($user->name, 0, 1) }}
                             </div>
                         @endif

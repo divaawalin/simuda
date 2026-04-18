@@ -3,26 +3,25 @@
 @section('page-title', 'Absensi Kegiatan')
 
 @section('content')
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm p-4 bg-white">
-            <div class="d-flex align-items-center">
-                <div class="bg-primary text-white p-3 rounded-4 me-4">
-                    <i class="fas fa-calendar-check fa-2x"></i>
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-calendar-check"></i>
                 </div>
                 <div>
-                    <h4 class="fw-800 mb-1 text-primary">Daftar Kegiatan Anda</h4>
-                    <p class="mb-0 text-muted">Absensi terbaru Anda akan tercatat di sini.</p>
+                    <h4 class="fw-bold">Daftar Kegiatan Anda</h4>
+                    <p>Semua kegiatan yang Anda ikuti akan tampil di sini beserta akses cepat ke detail absensi.</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
+    <div class="row">
     @forelse($kegiatans as $kegiatan)
     <div class="col-xl-4 col-md-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm transition-up overflow-hidden">
+        <div class="card h-100 border-0 shadow-sm overflow-hidden">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="badge {{ $kegiatan->status == 'aktif' ? 'bg-success-subtle' : ($kegiatan->status == 'selesai' ? 'bg-secondary text-white' : 'bg-warning text-dark') }}">
@@ -50,12 +49,6 @@
         </div>
     </div>
     @endforelse
+    </div>
 </div>
-
-<style>
-.transition-up:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-}
-</style>
 @endsection

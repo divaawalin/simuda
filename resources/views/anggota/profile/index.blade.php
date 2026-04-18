@@ -3,7 +3,21 @@
 @section('page-title', 'Profil Anggota')
 
 @section('content')
-<div class="main-container">
+<div class="container-fluid px-0">
+    <div class="page-banner mb-4">
+        <div class="page-banner-content">
+            <div class="page-banner-copy">
+                <div class="page-banner-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold">Profil Anggota</h4>
+                    <p>Kelola biodata, kontak, foto profil, dan keamanan akun Anda dengan tampilan yang lebih rapi.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
         <!-- Profile Photo Card -->
         <div class="col-lg-4">
@@ -11,11 +25,10 @@
                 <div class="card-body p-4">
                     <div class="profile-photo-container mb-4">
                         @if($user->foto_profile)
-                            <img src="{{ route('storage.profiles', $user->foto_profile) }}" class="rounded-3 shadow" 
-                                 alt="Profile" style="width: 160px; height: 160px; object-fit: cover; border: 4px solid var(--primary-color);">
+                            <img src="{{ route('storage.profiles', $user->foto_profile) }}" class="avatar-display"
+                                 alt="Profile">
                         @else
-                            <div class="bg-primary-subtle rounded-3 d-flex align-items-center justify-content-center mx-auto" 
-                                 style="width: 160px; height: 160px; color: var(--primary-color); font-size: 3.5rem; font-weight: 700;">
+                            <div class="avatar-placeholder-lg mx-auto">
                                 {{ substr($user->name, 0, 1) }}
                             </div>
                         @endif
@@ -160,7 +173,7 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     function previewImage(event) {
         const reader = new FileReader();
@@ -171,11 +184,7 @@
             } else {
                 const imgPlaceholder = document.createElement('img');
                 imgPlaceholder.src = reader.result;
-                imgPlaceholder.classList.add('rounded-3', 'shadow');
-                imgPlaceholder.style.width = '160px';
-                imgPlaceholder.style.height = '160px';
-                imgPlaceholder.style.objectFit = 'cover';
-                imgPlaceholder.style.border = '4px solid var(--primary-color)';
+                imgPlaceholder.classList.add('avatar-display');
                 document.querySelector('.profile-photo-container').innerHTML = '';
                 document.querySelector('.profile-photo-container').appendChild(imgPlaceholder);
             }
@@ -183,4 +192,4 @@
         reader.readAsDataURL(event.target.files[0]);
     }
 </script>
-@endsection
+@endpush
