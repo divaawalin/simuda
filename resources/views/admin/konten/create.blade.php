@@ -1,85 +1,91 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Konten Baru')
-
 @section('content')
-<div class="container">
+<div class="main-container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card border-0 shadow-sm">
                 <div class="card-header">
-                    <h3 class="card-title">Tambah Konten Baru</h3>
+                    <h6 class="m-0 fw-bold">
+                        <i class="fas fa-plus-circle me-2 text-primary"></i>Tambah Konten Baru
+                    </h6>
                 </div>
-
                 <div class="card-body">
-                    <form id="kontenForm" action="{{ route('konten.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('konten.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="form-group mb-3">
-                            <label for="nama_konten">Nama Konten</label>
-                            <input type="text" name="nama_konten" id="nama_konten" class="form-control @error('nama_konten') is-invalid @enderror" value="{{ old('nama_konten') }}" required>
+                        <div class="mb-4">
+                            <label for="nama_konten" class="form-label fw-semibold">Nama Konten <span class="text-danger">*</span></label>
+                            <input type="text" name="nama_konten" id="nama_konten" 
+                                   class="form-control @error('nama_konten') is-invalid @enderror" 
+                                   value="{{ old('nama_konten') }}" required 
+                                   placeholder="Masukkan nama konten">
                             @error('nama_konten')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="deskripsi">Deskripsi</label>
-                            <textarea name="deskripsi" id="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror" rows="3">{{ old('deskripsi') }}</textarea>
+                        <div class="mb-4">
+                            <label for="deskripsi" class="form-label fw-semibold">Deskripsi</label>
+                            <textarea name="deskripsi" id="deskripsi" rows="3" 
+                                      class="form-control @error('deskripsi') is-invalid @enderror" 
+                                      placeholder="Jelaskan konten ini">{{ old('deskripsi') }}</textarea>
                             @error('deskripsi')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="tipe">Tipe Konten</label>
-                            <select name="tipe" id="tipe" class="form-control @error('tipe') is-invalid @enderror" required>
-                                <option value="">Pilih Tipe</option>
-                                <option value="gambar" {{ old('tipe') == 'gambar' ? 'selected' : '' }}>Gambar</option>
-                                <option value="file" {{ old('tipe') == 'file' ? 'selected' : '' }}>File (PDF, DOC, dll.)</option>
-                                <option value="link" {{ old('tipe') == 'link' ? 'selected' : '' }}>Link Eksternal</option>
-                            </select>
-                            @error('tipe')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="tipe" class="form-label fw-semibold">Tipe Konten <span class="text-danger">*</span></label>
+                                <select name="tipe" id="tipe" class="form-control @error('tipe') is-invalid @enderror" required>
+                                    <option value="">Pilih Tipe</option>
+                                    <option value="gambar" {{ old('tipe') == 'gambar' ? 'selected' : '' }}>Gambar</option>
+                                    <option value="file" {{ old('tipe') == 'file' ? 'selected' : '' }}>File (PDF, DOC)</option>
+                                    <option value="link" {{ old('tipe') == 'link' ? 'selected' : '' }}>Link Eksternal</option>
+                                </select>
+                                @error('tipe')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
-                        <div id="fileUploadSection" class="form-group mb-3" style="display: none;">
-                            <label for="file_konten">Unggah File (Gambar/Dokumen)</label>
-                            <input type="file" name="file_konten" id="file_konten" class="form-control-file @error('file_konten') is-invalid @enderror">
-                            <small class="form-text text-muted">Ukuran maksimal 10MB.</small>
+                        <div id="fileUploadSection" class="mb-4" style="display: none;">
+                            <label for="file_konten" class="form-label fw-semibold">Unggah File (Gambar/Dokumen) <span class="text-danger">*</span></label>
+                            <input type="file" name="file_konten" id="file_konten" class="form-control @error('file_konten') is-invalid @enderror">
+                            <small class="text-muted d-block mt-1">Ukuran maksimal 10MB.</small>
                             @error('file_konten')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div id="linkUrlSection" class="form-group mb-3" style="display: none;">
-                            <label for="link_url">URL Link</label>
-                            <input type="url" name="link_url" id="link_url" class="form-control @error('link_url') is-invalid @enderror" value="{{ old('link_url') }}">
+                        <div id="linkUrlSection" class="mb-4" style="display: none;">
+                            <label for="link_url" class="form-label fw-semibold">URL Link <span class="text-danger">*</span></label>
+                            <input type="url" name="link_url" id="link_url" class="form-control @error('link_url') is-invalid @enderror" 
+                                   value="{{ old('link_url') }}" placeholder="https://example.com">
                             @error('link_url')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Simpan Konten</button>
-                        <a href="{{ route('konten.index') }}" class="btn btn-secondary">Batal</a>
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <a href="{{ route('konten.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Kembali
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i> Simpan Konten
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <script>
     const tipeSelect = document.getElementById('tipe');
     const fileUploadSection = document.getElementById('fileUploadSection');
@@ -93,15 +99,15 @@
         if (selectedTipe === 'gambar' || selectedTipe === 'file') {
             fileUploadSection.style.display = 'block';
             linkUrlSection.style.display = 'none';
-            linkInput.value = ''; // Clear link URL if switching from link
-            fileInput.required = true; // Make file upload required for gambar/file
+            linkInput.value = '';
+            fileInput.required = true;
             linkInput.required = false;
         } else if (selectedTipe === 'link') {
             fileUploadSection.style.display = 'none';
             linkUrlSection.style.display = 'block';
-            fileInput.value = ''; // Clear file input if switching to link
+            fileInput.value = '';
             fileInput.required = false;
-            linkInput.required = true; // Make link URL required for link
+            linkInput.required = true;
         } else {
             fileUploadSection.style.display = 'none';
             linkUrlSection.style.display = 'none';
@@ -112,9 +118,7 @@
         }
     }
 
-    // Initial check on page load
     document.addEventListener('DOMContentLoaded', toggleInputSections);
-    // Add event listener for changes in the select dropdown
     tipeSelect.addEventListener('change', toggleInputSections);
 </script>
 @endsection

@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class AnggotaController extends Controller
 {
+    public function index()
+    {
+        $anggota = User::where('role', 'anggota')
+            ->orderBy('name', 'asc')
+            ->paginate(10);
+
+        return view('admin.anggota.index', compact('anggota'));
+    }
+
     public function create()
     {
         return view('admin.anggota.create');
