@@ -9,7 +9,7 @@ class KontenController extends Controller
 {
     public function index()
     {
-        $konten = Konten::latest()->get();
+        $konten = Konten::latest()->paginate(10);
 
         return view('anggota.konten.index', compact('konten'));
     }

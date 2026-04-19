@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 class KegiatanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kegiatans = Kegiatan::with('creator')->orderBy('tanggal', 'desc')->get();
+        $kegiatans = Kegiatan::with('creator')->orderBy('tanggal', 'desc')->paginate(10);
 
         return view('admin.kegiatan.index', compact('kegiatans'));
     }

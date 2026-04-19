@@ -15,14 +15,14 @@ class AbsensiController extends Controller
     /**
      * Step 1 — Pilih Kegiatan
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         
         // Ambil kegiatan yang diinvite
         $kegiatans = Kegiatan::whereIn('id', function($query) use ($user) {
             $query->select('kegiatan_id')->from('absensi_invite')->where('user_id', $user->id);
-        })->latest()->get();
+        })->latest()->paginate(10);
 
         return view('anggota.absensi.index', compact('kegiatans'));
     }

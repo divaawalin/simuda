@@ -18,13 +18,13 @@ class AnggotaDashboardController extends Controller
             $query->select('kegiatan_id')
                 ->from('absensi_invite')
                 ->where('user_id', $user->id);
-        })->latest()->get();
+        })->latest()->paginate(5, ['*'], 'kegiatanPage'); // Paginate kegiatans
 
         $kehadiranHariIni = Absensi::where('user_id', $user->id)
             ->whereDate('waktu_absen', today())
             ->count();
 
-        $konten = Konten::latest()->get();
+        $konten = Konten::latest()->paginate(5, ['*'], 'kontenPage'); // Paginate konten
 
         return view('anggota.dashboard', compact('konten', 'kegiatans', 'kehadiranHariIni'));
     }

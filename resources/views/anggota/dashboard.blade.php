@@ -75,6 +75,9 @@
         <div class="col-12 text-center py-5 text-muted">Belum ada kegiatan untuk diikuti.</div>
         @endforelse
     </div>
+    <div class="mt-4">
+        {{ $kegiatans->links('pagination::bootstrap-5', ['kegiatanPage' => true]) }}
+    </div>
 
     <!-- Konten -->
     <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
@@ -142,6 +145,9 @@
             </div>
         </div>
         @endforelse
+    </div>
+    <div class="mt-4">
+        {{ $konten->links('pagination::bootstrap-5', ['kontenPage' => true]) }}
     </div>
 </div>
 @endsection

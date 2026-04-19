@@ -50,5 +50,8 @@
     </div>
     @endforelse
     </div>
+    <div class="mt-4">
+        {{ $kegiatans->links() }}
+    </div>
 </div>
 @endsection

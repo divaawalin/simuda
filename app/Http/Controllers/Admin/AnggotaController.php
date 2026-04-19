@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AnggotaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $anggota = User::where('role', 'anggota')
             ->orderBy('name', 'asc')

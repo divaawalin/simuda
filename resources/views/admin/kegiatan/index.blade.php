@@ -92,6 +92,9 @@
                 </table>
             </div>
         </div>
+        <div class="card-footer bg-white border-0 py-3">
+            {{ $kegiatans->links() }}
+        </div>
     </div>
 </div>
 @endsection

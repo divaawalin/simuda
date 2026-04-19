@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Hash;
 
 class UserAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::whereIn('role', ['admin', 'sekretaris', 'ketua'])->get();
+        $users = User::whereIn('role', ['admin', 'sekretaris', 'ketua'])->paginate(10);
 
         return view('admin.users.index', compact('users'));
     }

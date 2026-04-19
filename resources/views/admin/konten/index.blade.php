@@ -76,5 +76,8 @@
         </div>
         @endforelse
     </div>
+    <div class="mt-4">
+        {{ $kontens->links() }}
+    </div>
 </div>
 @endsection

@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\File;
 
 class KontenController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kontens = Konten::latest()->get();
+        $kontens = Konten::latest()->paginate(10);
 
         return view('admin.konten.index', compact('kontens'));
     }
