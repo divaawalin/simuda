@@ -1574,7 +1574,6 @@
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 252, 252, 0.92));
             border: 1px solid rgba(4, 142, 142, 0.06);
             border-radius: 24px;
-            box-shadow: 0 20px 44px rgba(14, 53, 61, 0.08);
         }
 
         .avatar-display {

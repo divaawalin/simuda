@@ -66,7 +66,7 @@
             {{ $kegiatans->links() }} {{-- Pagination links --}}
         </div>
         <div class="col-xl-4">
-            <div class="card border-0 rounded-4 h-100">
+            <div class="card border-0 rounded-4">
                 <div class="card-header border-0 pt-4 px-4">
                     <h5 class="fw-bold mb-0"><i class="fas fa-route me-2" style="color:var(--secondary-color);"></i>Alur Absensi</h5>
                 </div>
