@@ -1,18 +1,6 @@
 @extends('layouts.auth')
 
 @section('auth_content')
-    @if(session('error'))
-        <div class="alert alert-danger">
-            <i class="fas fa-circle-exclamation me-2"></i>{{ session('error') }}
-        </div>
-    @endif
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            <i class="fas fa-circle-check me-2"></i>{{ session('success') }}
-        </div>
-    @endif
-
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
@@ -59,3 +47,27 @@
         </div>
     </form>
 @endsection
+
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        confirmButtonColor: '#048e8e',
+        confirmButtonText: 'Mengerti'
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '{{ session('error') }}',
+        confirmButtonColor: '#048e8e',
+        confirmButtonText: 'Mengerti'
+    });
+</script>
+@endif

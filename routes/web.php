@@ -25,8 +25,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/lupa-password', [AuthController::class, 'showLupaPassword'])->name('password.request');
     Route::post('/lupa-password', [AuthController::class, 'lupaPassword']);
-    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
-    Route::post('/reset-password/{token}', [AuthController::class, 'resetPassword']);
+    Route::get('/reset-password', [AuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 });
 
 // Auth required

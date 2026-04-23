@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -76,46 +74,36 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Email tidak ditemukan.'])->withInput();
         }
 
-        $token = Str::random(64);
+        $request->session()->put('reset_email', $request->email);
 
-        \DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $request->email],
-            [
-                'token' => Hash::make($token),
-                'created_at' => Carbon::now(),
-            ]
-        );
-
-        $resetLink = url('/reset-password/'.$token);
-
-        return redirect('/reset-password/'.$token)->with('info', 'Link reset password: '.$resetLink);
+        return redirect()->route('password.reset');
     }
 
-    public function showResetPassword($token)
+    public function showResetPassword()
     {
-        $tokenData = \DB::table('password_reset_tokens')
-            ->where('token', 'like', '%'.substr($token, 0, 16).'%')
-            ->first();
-
-        return view('auth.reset-password', compact('token'));
-    }
-
-    public function resetPassword(Request $request, $token)
-    {
-        $request->validate([
-            'password_baru' => 'required|min:8',
-            'konfirmasi_password' => 'required|same:password_baru',
-        ], [
-            'password_baru.required' => 'Password baru wajib diisi.',
-            'password_baru.min' => 'Password minimal 8 karakter.',
-            'konfirmasi_password.required' => 'Konfirmasi password wajib diisi.',
-            'konfirmasi_password.same' => 'Password tidak sama.',
-        ]);
-
-        $email = $request->email ?? null;
+        $email = session('reset_email');
 
         if (! $email) {
-            return back()->withErrors(['token' => 'Link reset password tidak valid.']);
+            return redirect()->route('password.request')->withErrors(['email' => 'Silakan masukkan email terlebih dahulu.']);
+        }
+
+        return view('auth.reset-password', compact('email'));
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ], [
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak sama.',
+        ]);
+
+        $email = session('reset_email');
+
+        if (! $email) {
+            return back()->withErrors(['email' => 'Sesi reset password tidak valid.']);
         }
 
         $user = User::where('email', $email)->first();
@@ -124,10 +112,10 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Email tidak ditemukan.']);
         }
 
-        $user->password = Hash::make($request->password_baru);
+        $user->password = Hash::make($request->password);
         $user->save();
 
-        \DB::table('password_reset_tokens')->where('email', $email)->delete();
+        $request->session()->forget('reset_email');
 
         return redirect('/login')->with('success', 'Password berhasil direset. Silakan login dengan password baru.');
     }

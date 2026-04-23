@@ -7,10 +7,9 @@ use App\Models\AbsensiInvite;
 use App\Models\AbsensiSesi;
 use App\Models\Kegiatan;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -63,35 +62,52 @@ class DatabaseSeeder extends Seeder
         // 2. Create more Anggota Users
         $anggotaUsers = collect();
         $anggotaUsers->push(User::create([ // Keep the original ones
-            'name' => 'Anggota Aktif 1',
+            'name' => 'Ahmad Budi Santoso',
             'divisi' => 'Pengembangan SDM',
             'no_telp' => '081234567893',
             'email' => 'anggota1@gmail.com',
             'password' => Hash::make('password'),
-            'alamat' => 'Kulon Progo, Yogyakarta',
+            'alamat' => 'Jl. Malioboro No. 12, Yogyakarta',
             'role' => 'anggota',
             'status' => 'aktif',
         ]));
         $anggotaUsers->push(User::create([
-            'name' => 'Anggota Aktif 2',
+            'name' => 'Siti Nurhaliza',
             'divisi' => 'Hubungan Masyarakat',
             'no_telp' => '081234567894',
             'email' => 'anggota2@gmail.com',
             'password' => Hash::make('password'),
-            'alamat' => 'Gunung Kidul, Yogyakarta',
+            'alamat' => 'Jl. Solo No. 45, Sleman, Yogyakarta',
             'role' => 'anggota',
             'status' => 'aktif',
         ]));
 
+        $namaAnggota = [
+            'Bambang Sutrisno', 'Ratna Sari Dewi', 'Dedi Kurniawan', 'Fitriani Maharani',
+            'Eko Prasetyo', 'Lestari Wulandari', 'Hendra Gunawan', 'Sri Wahyuni',
+            'Agus Salim', 'Rina Amelia', 'Joko Susilo', 'Maya Sari',
+            'Budiarto Nugroho', 'Dian Purnamasari', 'Andi Saputra', 'Citra Kirana',
+            'Fajar Nugraha', 'Indah Permata', 'Hendra Wijaya', 'Sari Melati',
+            'Doni Kusuma', 'Rini Handayani', 'Fachri Alamsyah', 'Tari Wulandari',
+            'Rizki Ramadhan', 'Mawar Tika', 'Sandi Pratama', 'Lina Marlina',
+            'Yoga Septian', 'Dewi Sartika', 'Rama Setiawan', 'Merry Magdalena',
+            'Toni Suhendar', 'Elsa Firmansyah', 'Wira Saputra', 'Nina Kartika',
+            'Hasan Basri', 'Yuni Astuti', 'Dika Fernanda', 'Rika Fatimah',
+            'Oscar Pratama', 'Nita Aulia', 'Rian Firmansyah', 'Santi Dewi',
+            'David Kurniawan', 'Fani Oktavia', 'Bayu Aji', 'Lia Anggraini',
+            'Rangga Putra', 'Mira Kusuma', 'Aldi Maulana', 'Yani Sri',
+            'Fajar Maulana', 'Intan Permatasari', 'Reza Fauzi', 'Dina Mariana',
+        ];
+
         $divisis = ['Pengembangan SDM', 'Hubungan Masyarakat', 'Keuangan', 'Operasional', 'Teknologi Informasi', 'Marketing', 'Produksi'];
-        for ($i = 3; $i <= 55; $i++) { // Create 53 additional anggota users (total ~55)
+        foreach ($namaAnggota as $index => $nama) {
             $anggotaUsers->push(User::create([
-                'name' => 'Anggota ' . $i,
+                'name' => $nama,
                 'divisi' => $divisis[array_rand($divisis)],
-                'no_telp' => '0812' . rand(100000000, 999999999),
-                'email' => 'anggota' . $i . '@gmail.com',
+                'no_telp' => '0812'.rand(1000000, 9999999),
+                'email' => 'anggota'.($index + 3).'@gmail.com',
                 'password' => Hash::make('password'),
-                'alamat' => 'Kota ' . Str::random(5),
+                'alamat' => 'Kota '.['Yogyakarta', 'Sleman', 'Bantul', 'Kulon Progo', 'Gunung Kidul'][array_rand(['Yogyakarta', 'Sleman', 'Bantul', 'Kulon Progo', 'Gunung Kidul'])],
                 'role' => 'anggota',
                 'status' => 'aktif',
             ]));
@@ -99,15 +115,26 @@ class DatabaseSeeder extends Seeder
 
         // 3. Create Multiple Kegiatan
         $kegiatans = collect();
-        for ($k = 1; $k <= 8; $k++) { // Create 8 activities
-            $kegiatanDate = Carbon::now()->subMonths(rand(0, 6))->subDays(rand(0, 20))->subHours(rand(0, 23))->subMinutes(rand(0, 59));
+        $kegiatanData = [
+            ['Rapat Koordinasi Bulanan', 'Evaluasi kinerja bulanan seluruh divisi organisasi'],
+            ['Bakti Sosial', 'Kegiatan sosial untuk masyarakat sekitar kampus'],
+            ['Seminar Kepemimpinan', 'Workshop pengembangan soft skill kepemimpinan'],
+            ['Turnamen Futsal Antar Divisi', 'Kompetisi olahraga untuk mempererat solidaritas'],
+            ['Buka Puasa Bersama', 'Acara buka puasa bareng seluruh anggota organisasi'],
+            ['Workshop Digital Marketing', 'Pelatihan strategi pemasaran di era digital'],
+            ['Charity Event', 'Penggalangan dana untuk korban bencana alam'],
+            ['Study Tour Kampus', 'Kunjungan edukatif ke perusahaan teknologi'],
+        ];
+
+        foreach ($kegiatanData as $index => $data) {
+            $kegiatanDate = Carbon::now()->subMonths(rand(0, 6))->subDays(rand(0, 20))->setTime(8, 0, 0);
             $kegiatans->push(Kegiatan::create([
-                'nama_kegiatan' => 'Kegiatan ' . $k . ': ' . Str::title(Str::random(10)),
-                'deskripsi' => 'Deskripsi untuk kegiatan ' . $k . '.',
+                'nama_kegiatan' => $data[0],
+                'deskripsi' => $data[1],
                 'tanggal' => $kegiatanDate->toDateString(),
                 'waktu_mulai' => '08:00:00',
                 'waktu_selesai' => '12:00:00',
-                'lokasi' => 'Lokasi Kegiatan ' . $k,
+                'lokasi' => 'Gedung Serbaguna '.['A', 'B', 'C'][array_rand(['A', 'B', 'C'])],
                 'status' => 'aktif',
                 'created_by' => $admin->id,
             ]));
@@ -117,7 +144,7 @@ class DatabaseSeeder extends Seeder
         foreach ($kegiatans as $kegiatan) {
             // Invite a larger subset of anggota, up to all of them for a large activity
             $numToInvite = rand(ceil($anggotaUsers->count() * 0.5), $anggotaUsers->count());
-            $invitedAnggota = $anggotaUsers->random($numToInvite); 
+            $invitedAnggota = $anggotaUsers->random($numToInvite);
 
             foreach ($invitedAnggota as $anggota) {
                 AbsensiInvite::create([
@@ -131,7 +158,7 @@ class DatabaseSeeder extends Seeder
             $sesiMulai = AbsensiSesi::create([
                 'kegiatan_id' => $kegiatan->id,
                 'tipe_sesi' => 'mulai',
-                'metode' => (rand(0,1) == 1) ? 'mandiri' : 'qr_code',
+                'metode' => (rand(0, 1) == 1) ? 'mandiri' : 'qr_code',
                 'status_sesi' => 'selesai', // Ensure it's finished for percentage calculation
                 'dimulai_oleh' => $admin->id,
                 'dimulai_at' => $sesiMulaiDate,
@@ -144,7 +171,7 @@ class DatabaseSeeder extends Seeder
             $sesiSelesai = AbsensiSesi::create([
                 'kegiatan_id' => $kegiatan->id,
                 'tipe_sesi' => 'selesai',
-                'metode' => (rand(0,1) == 1) ? 'mandiri' : 'qr_code',
+                'metode' => (rand(0, 1) == 1) ? 'mandiri' : 'qr_code',
                 'status_sesi' => 'selesai', // Ensure it's finished for percentage calculation
                 'dimulai_oleh' => $admin->id,
                 'dimulai_at' => $sesiSelesaiDate->copy()->subMinutes(30),

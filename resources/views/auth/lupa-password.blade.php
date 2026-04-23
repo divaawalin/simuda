@@ -4,24 +4,9 @@
 @section('eyebrow', 'Pemulihan')
 @section('auth_icon', 'fas fa-key')
 @section('heading', 'Lupa Password')
-@section('subtitle', 'Masukkan email akun Anda. Sistem akan mengirimkan tautan reset password agar Anda bisa masuk kembali.')
+@section('subtitle', 'Masukkan email akun Anda untuk verifikasi.')
 
 @section('auth_content')
-    @if(session('success'))
-        <div class="alert alert-success">
-            <i class="fas fa-circle-check me-2"></i>{{ session('success') }}
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <i class="fas fa-circle-exclamation me-2"></i>
-            @foreach($errors->all() as $error)
-                <div>{{ $error }}</div>
-            @endforeach
-        </div>
-    @endif
-
     <form action="{{ url('/lupa-password') }}" method="POST">
         @csrf
 
@@ -37,7 +22,7 @@
         </div>
 
         <button type="submit" class="btn btn-auth">
-            Kirim Link Reset <i class="fas fa-paper-plane ms-2"></i>
+            Verifikasi Email <i class="fas fa-paper-plane ms-2"></i>
         </button>
 
         <div class="auth-links">
@@ -47,3 +32,15 @@
         </div>
     </form>
 @endsection
+
+@if($errors->any())
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        html: '{!! implode("<br>", $errors->all()) !!}',
+        confirmButtonColor: '#048e8e',
+        confirmButtonText: 'Mengerti'
+    });
+</script>
+@endif

@@ -7,16 +7,7 @@
 @section('subtitle', 'Masukkan password baru yang kuat dan mudah Anda ingat untuk mengaktifkan kembali akses ke sistem.')
 
 @section('auth_content')
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <i class="fas fa-circle-exclamation me-2"></i>
-            @foreach($errors->all() as $error)
-                <div>{{ $error }}</div>
-            @endforeach
-        </div>
-    @endif
-
-    <form action="{{ url('/reset-password/'.$token) }}" method="POST">
+    <form action="{{ url('/reset-password') }}" method="POST">
         @csrf
 
         <div class="mb-4">
@@ -55,3 +46,15 @@
         </div>
     </form>
 @endsection
+
+@if($errors->any())
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        html: '{!! implode("<br>", $errors->all()) !!}',
+        confirmButtonColor: '#048e8e',
+        confirmButtonText: 'Mengerti'
+    });
+</script>
+@endif
