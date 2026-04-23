@@ -10,6 +10,8 @@ use App\Models\Kegiatan;
 use App\Models\User;
 use App\Services\AttendanceService; // Add this line
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -28,10 +30,10 @@ class AbsensiController extends Controller
     /**
      * Step 2 — Halaman invite anggota
      */
-    public function invite($kegiatan_id)
+    public function invite(Request $request, $kegiatan_id)
     {
         $kegiatan = Kegiatan::findOrFail($kegiatan_id);
-        $anggota = User::where('role', 'anggota')->where('status', 'aktif')->get();
+        $anggota = User::where('role', 'anggota')->where('status', 'aktif')->paginate(10);
         $invited_ids = AbsensiInvite::where('kegiatan_id', $kegiatan_id)->pluck('user_id')->toArray();
 
         return view('admin.absensi.invite', compact('kegiatan', 'anggota', 'invited_ids'));
@@ -246,17 +248,17 @@ class AbsensiController extends Controller
 
         // Manually paginate the collection after calculations
         $perPage = 10; // Number of items per page
-        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+        $currentPage = Paginator::resolveCurrentPage();
         $pagedData = $all_invited_users->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
-        $invited_users = new \Illuminate\Pagination\LengthAwarePaginator(
+        $invited_users = new LengthAwarePaginator(
             $pagedData,
             $all_invited_users->count(),
             $perPage,
             $currentPage,
             ['path' => $request->url()]
         );
-        
+
         $totalDiundang = $all_invited_users->count(); // Use count of all invited users for summary stats
         $mulaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_mulai))->count();
         $selesaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_selesai))->count();
@@ -292,10 +294,10 @@ class AbsensiController extends Controller
             $totalInvited = $invitedUserIds->count();
 
             $attendedUserIds = Absensi::where('kegiatan_id', $kegiatan->id)
-                                    ->where('status', 'hadir')
-                                    ->whereIn('user_id', $invitedUserIds) // Only consider invited users
-                                    ->pluck('user_id')
-                                    ->unique();
+                ->where('status', 'hadir')
+                ->whereIn('user_id', $invitedUserIds) // Only consider invited users
+                ->pluck('user_id')
+                ->unique();
             $totalAttended = $attendedUserIds->count();
 
             $attendancePercentage = ($totalInvited > 0) ? round(($totalAttended / $totalInvited) * 100, 2) : 0.0;
@@ -317,10 +319,10 @@ class AbsensiController extends Controller
 
         // Manually paginate the collection
         $perPage = 10; // Number of items per page
-        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+        $currentPage = Paginator::resolveCurrentPage();
         $pagedData = $allRecapData->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
-        $data = new \Illuminate\Pagination\LengthAwarePaginator(
+        $data = new LengthAwarePaginator(
             $pagedData,
             $allRecapData->count(),
             $perPage,

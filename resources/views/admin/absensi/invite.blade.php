@@ -56,6 +56,7 @@
                         </tbody>
                     </table>
                 </div>
+                {{ $anggota->links() }}
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">Simpan Daftar Invite</button>
                     <a href="{{ route('absensi.index') }}" class="btn btn-outline-secondary">Batal</a>
