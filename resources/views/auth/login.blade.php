@@ -1,11 +1,5 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
-@section('eyebrow', 'Masuk')
-@section('auth_icon', 'fas fa-user-shield')
-@section('heading', 'Masuk ke SIMUDA')
-@section('subtitle', 'Gunakan akun Anda untuk masuk ke panel organisasi dan lanjutkan pekerjaan dengan tampilan yang lebih rapi dan fokus.')
-
 @section('auth_content')
     @if(session('error'))
         <div class="alert alert-danger">

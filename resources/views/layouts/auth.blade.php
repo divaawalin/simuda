@@ -10,19 +10,10 @@
     <style>
         :root {
             --primary-color: #048e8e;
-            --primary-dark: #026e6e;
             --secondary-color: #5fc6d7;
-            --accent-color: #d8fff4;
             --ink: #16333b;
             --ink-soft: #60737d;
-            --surface: rgba(255, 255, 255, 0.9);
-            --surface-strong: #ffffff;
-            --line: rgba(22, 51, 59, 0.1);
-            --shadow-xl: 0 32px 80px rgba(6, 34, 42, 0.22);
             --shadow-lg: 0 18px 48px rgba(6, 34, 42, 0.14);
-            --radius-xl: 32px;
-            --radius-lg: 22px;
-            --radius-md: 16px;
             --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -83,190 +74,20 @@
 
         .auth-stage {
             width: min(1120px, 100%);
-            display: grid;
-            grid-template-columns: 1.02fr 0.98fr;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.56);
-            border: 1px solid rgba(255, 255, 255, 0.62);
-            box-shadow: var(--shadow-xl);
-            backdrop-filter: blur(18px);
-        }
-
-        .auth-aside {
-            position: relative;
-            padding: 46px;
-            min-height: 720px;
-            background:
-                radial-gradient(circle at top left, rgba(255, 255, 255, 0.22), transparent 32%),
-                radial-gradient(circle at bottom right, rgba(216, 255, 244, 0.26), transparent 28%),
-                linear-gradient(155deg, #0a8c8b 0%, #0b7f84 42%, #5fc6d7 100%);
-            color: #fff;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
-        }
-
-        .auth-aside::before,
-        .auth-aside::after {
-            content: '';
-            position: absolute;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.1);
-            filter: blur(2px);
-        }
-
-        .auth-aside::before {
-            width: 260px;
-            height: 260px;
-            top: -90px;
-            right: -70px;
-        }
-
-        .auth-aside::after {
-            width: 180px;
-            height: 180px;
-            bottom: -50px;
-            left: -35px;
-        }
-
-        .brand-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 18px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(10px);
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            font-size: 0.78rem;
-        }
-
-        .brand-badge i {
-            width: 34px;
-            height: 34px;
-            display: inline-flex;
-            align-items: center;
             justify-content: center;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.18);
-        }
-
-        .auth-copy {
-            position: relative;
-            z-index: 1;
-            max-width: 420px;
-        }
-
-        .auth-copy h1 {
-            margin: 22px 0 14px;
-            font-size: clamp(2.4rem, 4.8vw, 4rem);
-            line-height: 0.98;
-            font-weight: 800;
-            letter-spacing: -0.06em;
-        }
-
-        .auth-copy p {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.86);
-            font-size: 1rem;
-            line-height: 1.75;
-            max-width: 360px;
-        }
-
-        .auth-points {
-            display: grid;
-            gap: 14px;
-            margin-top: 34px;
-        }
-
-        .auth-point {
-            display: flex;
-            gap: 14px;
-            padding: 16px 18px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            backdrop-filter: blur(10px);
-        }
-
-        .auth-point i {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.16);
-            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .auth-point strong,
-        .auth-point span {
-            display: block;
-        }
-
-        .auth-point strong {
-            font-size: 0.95rem;
-            margin-bottom: 4px;
-        }
-
-        .auth-point span {
-            color: rgba(255, 255, 255, 0.76);
-            font-size: 0.88rem;
-            line-height: 1.55;
-        }
-
-        .aside-metrics {
-            position: relative;
-            z-index: 1;
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .aside-metric {
-            padding: 16px 14px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            text-align: center;
-        }
-
-        .aside-metric strong {
-            display: block;
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 2px;
-        }
-
-        .aside-metric span {
-            color: rgba(255, 255, 255, 0.74);
-            font-size: 0.76rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
         }
 
         .auth-panel {
-            position: relative;
+            border-radius: 28px;
+            border: 1px solid rgba(4, 142, 142, 0.08);
             padding: 42px;
             background:
                 linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
                 linear-gradient(120deg, rgba(255, 255, 255, 0.98), rgba(248, 252, 252, 0.88));
         }
 
-        .auth-panel::before {
-            content: '';
-            position: absolute;
-            inset: 28px;
-            border-radius: 28px;
-            border: 1px solid rgba(4, 142, 142, 0.08);
-            pointer-events: none;
-        }
 
         .auth-form-wrap {
             position: relative;
@@ -287,20 +108,6 @@
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-        }
-
-        .auth-icon {
-            width: 74px;
-            height: 74px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 24px 0 18px;
-            border-radius: 24px;
-            color: #fff;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 18px 40px rgba(4, 142, 142, 0.24);
-            font-size: 1.8rem;
         }
 
         .auth-form-wrap h2 {
@@ -452,38 +259,17 @@
             margin-top: 6px;
         }
 
-        @media (max-width: 991.98px) {
-            .auth-stage {
-                grid-template-columns: 1fr;
-            }
-
-            .auth-aside {
-                min-height: unset;
-                padding: 30px;
-                gap: 26px;
-            }
-
-            .aside-metrics {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-        }
-
         @media (max-width: 575.98px) {
             .auth-shell {
                 padding: 16px;
             }
 
-            .auth-panel,
-            .auth-aside {
+            .auth-panel {
                 padding: 24px 20px;
             }
 
             .auth-card {
                 padding: 20px;
-            }
-
-            .aside-metrics {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -492,62 +278,8 @@
 <body>
     <div class="auth-shell">
         <div class="auth-stage">
-            <aside class="auth-aside">
-                <div class="auth-copy">
-                    <div class="brand-badge">
-                        <i class="fas fa-sparkles"></i>
-                        {{ config('app.name', 'SIMUDA') }}
-                    </div>
-                    <h1>Sistem organisasi yang terasa modern.</h1>
-                    <p>Kelola anggota, kegiatan, absensi, dan distribusi konten dari satu tempat dengan tampilan yang lebih rapi, cepat, dan nyaman dipakai.</p>
-
-                    <div class="auth-points">
-                        <div class="auth-point">
-                            <i class="fas fa-shield-check"></i>
-                            <div>
-                                <strong>Akses lebih aman</strong>
-                                <span>Alur autentikasi disusun lebih jelas dengan fokus pada kenyamanan pengguna.</span>
-                            </div>
-                        </div>
-                        <div class="auth-point">
-                            <i class="fas fa-grid-2"></i>
-                            <div>
-                                <strong>Interface lebih bersih</strong>
-                                <span>Visual sistem dipusatkan pada keterbacaan, ritme ruang, dan decorative elements yang terkontrol.</span>
-                            </div>
-                        </div>
-                        <div class="auth-point">
-                            <i class="fas fa-bolt"></i>
-                            <div>
-                                <strong>Alur kerja tetap cepat</strong>
-                                <span>Komponen form, tombol, dan feedback dibuat lebih kuat tanpa mengorbankan fungsi.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="aside-metrics">
-                    <div class="aside-metric">
-                        <strong>Admin</strong>
-                        <span>Kontrol penuh</span>
-                    </div>
-                    <div class="aside-metric">
-                        <strong>Anggota</strong>
-                        <span>Akses terarah</span>
-                    </div>
-                    <div class="aside-metric">
-                        <strong>Konten</strong>
-                        <span>Terdistribusi</span>
-                    </div>
-                </div>
-            </aside>
-
             <main class="auth-panel">
                 <div class="auth-form-wrap">
-                    <span class="auth-eyebrow">@yield('eyebrow', 'Autentikasi')</span>
-                    <div class="auth-icon">
-                        <i class="@yield('auth_icon', 'fas fa-user-lock')"></i>
-                    </div>
                     <h2>@yield('heading', 'Masuk ke sistem')</h2>
                     <p>@yield('subtitle', 'Lanjutkan ke sistem menggunakan akun yang sudah terdaftar.')</p>
 
