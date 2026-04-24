@@ -1662,23 +1662,32 @@
                     <li class="{{ request()->routeIs('konten.*') ? 'active' : '' }}">
                         <a href="{{ route('konten.index') }}"><i class="fas fa-layer-group me-2"></i> Konten</a>
                     </li>
+                    <li class="{{ request()->routeIs('documents.*') ? 'active' : '' }}">
+                        <a href="{{ route('documents.index') }}"><i class="fas fa-file-archive me-2"></i> Dokumen</a>
+                    </li>
+                    <li class="{{ request()->routeIs('admin.export.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.export.index') }}"><i class="fas fa-file-export me-2"></i> Export</a>
+                    </li>
                     <li class="{{ request()->routeIs('admin.profile') ? 'active' : '' }}">
                         <a href="{{ route('admin.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
                     </li>
                  @else
-                     <li class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
-                         <a href="{{ route('anggota.dashboard') }}"><i class="fas fa-house me-2"></i> Dashboard</a>
-                     </li>
-                     <li class="{{ request()->routeIs('anggota.absensi.*') ? 'active' : '' }}">
-                         <a href="{{ route('anggota.absensi.index') }}"><i class="fas fa-fingerprint me-2"></i> Absensi</a>
-                     </li>
-                     <li class="{{ request()->routeIs('anggota.konten.*') ? 'active' : '' }}">
-                         <a href="{{ route('anggota.konten.index') }}"><i class="fas fa-layer-group me-2"></i> Konten</a>
-                     </li>
-                     <li class="{{ request()->routeIs('anggota.profile*') ? 'active' : '' }}">
-                         <a href="{{ route('anggota.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
-                     </li>
-                 @endif
+                      <li class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
+                          <a href="{{ route('anggota.dashboard') }}"><i class="fas fa-house me-2"></i> Dashboard</a>
+                      </li>
+                      <li class="{{ request()->routeIs('anggota.absensi.*') ? 'active' : '' }}">
+                          <a href="{{ route('anggota.absensi.index') }}"><i class="fas fa-fingerprint me-2"></i> Absensi</a>
+                      </li>
+                      <li class="{{ request()->routeIs('anggota.riwayat.*') ? 'active' : '' }}">
+                          <a href="{{ route('anggota.riwayat.index') }}"><i class="fas fa-history me-2"></i> Riwayat</a>
+                      </li>
+                      <li class="{{ request()->routeIs('anggota.konten.*') ? 'active' : '' }}">
+                          <a href="{{ route('anggota.konten.index') }}"><i class="fas fa-layer-group me-2"></i> Konten</a>
+                      </li>
+                      <li class="{{ request()->routeIs('anggota.profile*') ? 'active' : '' }}">
+                          <a href="{{ route('anggota.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
+                      </li>
+                  @endif
              </ul>
 
              @auth

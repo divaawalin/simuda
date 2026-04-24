@@ -138,6 +138,29 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
+            <div class="card border-0 rounded-4">
+                <div class="card-header border-0 bg-transparent">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-chart-line me-2" style="color: var(--primary-color);"></i>Tren Kegiatan & Absensi</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="trenChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 rounded-4 h-100">
+                <div class="card-header border-0 bg-transparent">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-calendar-alt me-2" style="color: var(--secondary-color);"></i>Kalender Kegiatan</h5>
+                </div>
+                <div class="card-body">
+                    <div id="calendar" style="max-height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-8">
             <div class="row g-4">
                 @foreach ([
                     ['title' => 'Total Anggota', 'value' => $totalAnggota ?? 0, 'icon' => 'fa-users', 'tone' => 'rgba(4,142,142,.08)', 'icon_color' => 'var(--primary-color)'],
@@ -193,12 +216,54 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
+    // Clock
     function updateClock() {
         document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
     }
-
     updateClock();
     setInterval(updateClock, 1000);
+
+    // Chart.js
+    const ctx = document.getElementById('trenChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ Js::from($labels) }},
+            datasets: [
+                {
+                    label: 'Kegiatan',
+                    data: {{ Js::from($kegiatanData) }},
+                    borderColor: '#048e8e',
+                    backgroundColor: 'rgba(4,142,142,0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Absensi',
+                    data: {{ Js::from($absensiData) }},
+                    borderColor: '#5fc6d7',
+                    backgroundColor: 'rgba(95,198,215,0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // FullCalendar
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: {!! App\Models\Kegiatan::all()->map(fn($k) => ['title' => $k->nama_kegiatan, 'start' => $k->tanggal])->toJson() !!}
+    });
+    calendar.render();
 </script>
 @endsection

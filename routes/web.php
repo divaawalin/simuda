@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AbsensiController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AnggotaController;
+use App\Http\Controllers\Admin\DocumentController;
+use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\KegiatanController;
 use App\Http\Controllers\Admin\KontenController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\Anggota\AbsensiController as AnggotaAbsensiController;
 use App\Http\Controllers\Anggota\AnggotaDashboardController;
 use App\Http\Controllers\Anggota\KontenController as AnggotaKontenController;
 use App\Http\Controllers\Anggota\ProfileController as AnggotaProfileController;
+use App\Http\Controllers\Anggota\RiwayatAbsensiController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -34,8 +37,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Admin Area (Admin, Sekretaris, Ketua)
-    Route::middleware('role:admin,sekretaris,ketua')->prefix('admin')->group(function () {
+    Route::middleware('role:admin,sekretaris,ketua')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+        // Document Management
+        Route::resource('/documents', DocumentController::class);
+
+        // Export
+        Route::get('/export', [ExportController::class, 'index'])->name('admin.export.index');
+        Route::post('/export/pdf', [ExportController::class, 'exportPdf'])->name('admin.export.pdf');
+        Route::post('/export/excel', [ExportController::class, 'exportExcel'])->name('admin.export.excel');
 
         // Manajemen Kegiatan
         Route::resource('/kegiatan', KegiatanController::class);
@@ -71,6 +82,9 @@ Route::middleware('auth')->group(function () {
     // Anggota Area
     Route::middleware('role:anggota')->prefix('anggota')->group(function () {
         Route::get('/dashboard', [AnggotaDashboardController::class, 'index'])->name('anggota.dashboard');
+
+        // Riwayat Absensi
+        Route::get('/riwayat', [RiwayatAbsensiController::class, 'index'])->name('anggota.riwayat.index');
 
         // Absensi Anggota
         Route::get('/absensi', [AnggotaAbsensiController::class, 'index'])->name('anggota.absensi.index');
