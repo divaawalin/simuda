@@ -13,21 +13,21 @@
     
     <style>
         :root {
-            --primary-color: #048E8E;
-            --primary-dark: #037676;
-            --secondary-color: #5FC6D7;
-            --accent-color: #6DD5D5;
+            --primary-color: #0F9FA5;
+            --primary-dark: #0D8B91;
+            --secondary-color: #33C4D6;
+            --accent-color: #EAF8FA;
             --dark-color: #1A252F;
             --dark-light: #2C3E50;
-            --light-bg: #F8F9FC;
+            --light-bg: #EAF8FA;
             --white: #FFFFFF;
             --text-dark: #2C3E50;
             --text-muted: #6c757d;
             --sidebar-width: 280px;
             --border-radius: 16px;
             --border-radius-sm: 10px;
-            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-            --card-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --card-shadow: 0 4px 24px rgba(15, 159, 165, 0.08);
+            --card-shadow-hover: 0 12px 40px rgba(15, 159, 165, 0.15);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -86,26 +86,53 @@
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border-radius: 50%;
             transform: translate(50%, -50%);
-            opacity: 0.05;
+            opacity: 0.08;
             z-index: 0;
         }
 
-        #sidebar .sidebar-header h3 {
+        #sidebar .brand-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #sidebar .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(15, 159, 165, 0.3);
+        }
+
+        #sidebar .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        #sidebar .brand-name {
             font-weight: 800;
+            font-size: 1.5rem;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin: 0;
-            letter-spacing: -1.5px;
-            font-size: 1.75rem;
-            position: relative;
-            z-index: 1;
+            letter-spacing: -0.5px;
         }
 
-        #sidebar .sidebar-header .logo-icon {
-            position: relative;
-            z-index: 1;
+        #sidebar .brand-location {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         #sidebar ul.components {
@@ -130,7 +157,7 @@
             border-radius: var(--border-radius-sm);
             transition: var(--transition);
             position: relative;
-            overflow: hidden;
+            overflow: visible !important;
         }
 
         #sidebar ul li a::before {
@@ -221,6 +248,248 @@
         #sidebar .user-info small {
             font-size: 0.75rem;
             color: var(--text-muted);
+            display: block;
+        }
+
+        /* Hero Premium Section */
+        .hero-premium {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: var(--border-radius);
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(15, 159, 165, 0.25);
+        }
+
+        .hero-premium::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .hero-premium::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-logo {
+            flex-shrink: 0;
+        }
+
+        .hero-logo-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-greeting {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
+            align-self: flex-start;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Stats Cards */
+        .stat-card-premium {
+            background: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .stat-card-premium:hover {
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .stat-card-premium .card-body {
+            padding: 24px;
+        }
+
+        .stat-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Quick Action Cards */
+        .action-card {
+            background: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--text-dark);
+            padding: 20px;
+            display: block;
+        }
+
+        .action-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-4px);
+            color: var(--text-dark);
+        }
+
+        .action-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .action-card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .action-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            width: 100%;
+        }
+
+        /* Flow Steps */
+        .flow-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .flow-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+
+        .flow-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 16px;
+            }
         }
 
         /* Content Styling */
@@ -1639,13 +1908,21 @@
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h3>SIMUDA</h3>
+                <div class="brand-wrapper">
+                    <div class="brand-icon">
+                        <i class="fas fa-mosque"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">GENERUS</span>
+                        <span class="brand-location">JEMBER</span>
+                    </div>
+                </div>
             </div>
 
             <ul class="list-unstyled components">
                 @if(auth()->user()->role !== 'anggota')
-                    <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <a href="{{ route('admin.dashboard') }}"><i class="fas fa-th me-2"></i> Dashboard</a>
+                    <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('dashboard') }}"><i class="fas fa-th me-2"></i> Dashboard</a>
                     </li>
                     <li class="{{ request()->routeIs('kegiatan.*') ? 'active' : '' }}">
                         <a href="{{ route('kegiatan.index') }}"><i class="fas fa-calendar-alt me-2"></i> Kegiatan</a>
@@ -1665,12 +1942,12 @@
                     <li class="{{ request()->routeIs('documents.*') ? 'active' : '' }}">
                         <a href="{{ route('documents.index') }}"><i class="fas fa-file-archive me-2"></i> Dokumen</a>
                     </li>
-                    <li class="{{ request()->routeIs('admin.export.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.export.index') }}"><i class="fas fa-file-export me-2"></i> Export</a>
+                    <li class="{{ request()->routeIs('export.*') ? 'active' : '' }}">
+                        <a href="{{ route('export.index') }}"><i class="fas fa-file-export me-2"></i> Export</a>
                     </li>
-                    <li class="{{ request()->routeIs('admin.profile') ? 'active' : '' }}">
-                        <a href="{{ route('admin.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
-                    </li>
+                     <li class="{{ request()->routeIs('profile*') ? 'active' : '' }}">
+                         <a href="{{ route('profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
+                     </li>
                  @else
                       <li class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
                           <a href="{{ route('anggota.dashboard') }}"><i class="fas fa-house me-2"></i> Dashboard</a>
@@ -1742,7 +2019,7 @@
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ auth()->user()->role === 'anggota' ? route('anggota.profile') : route('admin.profile') }}">
+                                        <a class="dropdown-item" href="{{ auth()->user()->role === 'anggota' ? route('anggota.profile') : route('profile') }}">
                                             <i class="fas fa-user-circle"></i> My Profile
                                         </a>
                                     </li>
@@ -1884,6 +2161,7 @@
             });
         });
     </script>
+    @stack('modals')
     @stack('scripts')
 </body>
 </html>

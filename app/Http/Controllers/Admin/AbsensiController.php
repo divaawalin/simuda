@@ -226,7 +226,8 @@ class AbsensiController extends Controller
     public function rekap($kegiatan_id, AttendanceService $attendanceService, Request $request)
     {
         $kegiatan = Kegiatan::findOrFail($kegiatan_id);
-        // Fetch all invited users first to calculate percentages
+
+        // Fetch all invited users
         $all_invited_users = User::whereIn('id', function ($query) use ($kegiatan_id) {
             $query->select('user_id')->from('absensi_invite')->where('kegiatan_id', $kegiatan_id);
         })->get();
@@ -234,20 +235,61 @@ class AbsensiController extends Controller
         $sesi_mulai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'mulai')->first();
         $sesi_selesai = AbsensiSesi::where('kegiatan_id', $kegiatan_id)->where('tipe_sesi', 'selesai')->first();
 
+        // Get all attendance records for this activity
+        $attendanceRecords = Absensi::where('kegiatan_id', $kegiatan_id)
+            ->whereIn('user_id', $all_invited_users->pluck('id'))
+            ->get();
+
+        // Count by status (sakit counted as izin)
+        $totalHadir = $attendanceRecords->where('status', 'hadir')->unique('user_id')->count();
+        $totalIzin = $attendanceRecords->whereIn('status', ['izin', 'sakit'])->unique('user_id')->count();
+        $totalAlfa = $attendanceRecords->where('status', 'alfa')->unique('user_id')->count();
+
+        // Overall percentage (hadir / total invited)
+        $totalDiundang = $all_invited_users->count();
+        $overallPercentage = $totalDiundang > 0 ? round(($totalHadir / $totalDiundang) * 100, 2) : 0;
+
+        // Session-specific counts
+        $mulaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_mulai))->count();
+        $selesaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_selesai))->count();
+
+        // Per-user detailed attendance
         foreach ($all_invited_users as $user) {
-            $user->absen_mulai = Absensi::where('absensi_sesi_id', optional($sesi_mulai)->id)
-                ->where('user_id', $user->id)
-                ->first();
-
-            $user->absen_selesai = Absensi::where('absensi_sesi_id', optional($sesi_selesai)->id)
-                ->where('user_id', $user->id)
-                ->first();
-
+            $user->absen_mulai = $attendanceRecords->firstWhere('user_id', $user->id);
+            $user->absen_selesai = $attendanceRecords->firstWhere('user_id', $user->id);
             $user->attendance_percentage = $attendanceService->calculateUserActivityAttendancePercentage($user, $kegiatan);
         }
 
-        // Manually paginate the collection after calculations
-        $perPage = 10; // Number of items per page
+        // Summary stats
+        $summary = [
+            'total_invited' => $totalDiundang,
+            'total_hadir' => $totalHadir,
+            'total_izin' => $totalIzin,
+            'total_alfa' => $totalAlfa,
+            'overall_percentage' => $overallPercentage,
+            'mulai_hadir' => $mulaiHadir,
+            'selesai_hadir' => $selesaiHadir,
+        ];
+
+        // Best division
+        $divisiStats = $all_invited_users->groupBy('divisi')->map(function($users, $divisi) use ($attendanceRecords) {
+            $divisiUserIds = $users->pluck('id');
+            $hadir = $attendanceRecords->whereIn('user_id', $divisiUserIds)->where('status', 'hadir')->unique('user_id')->count();
+            $count = $users->count();
+            $percent = $count > 0 ? round(($hadir / $count) * 100, 1) : 0;
+            return [
+                'divisi' => $divisi,
+                'total' => $count,
+                'hadir' => $hadir,
+                'percentage' => $percent,
+            ];
+        })->sortByDesc('percentage');
+
+        $summary['best_divisi'] = $divisiStats->first();
+        $summary['divisi_breakdown'] = $divisiStats;
+
+        // Paginate
+        $perPage = 10;
         $currentPage = Paginator::resolveCurrentPage();
         $pagedData = $all_invited_users->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
@@ -259,14 +301,14 @@ class AbsensiController extends Controller
             ['path' => $request->url()]
         );
 
-        $totalDiundang = $all_invited_users->count(); // Use count of all invited users for summary stats
-        $mulaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_mulai))->count();
-        $selesaiHadir = $all_invited_users->filter(fn ($user) => ! is_null($user->absen_selesai))->count();
-
-        $persenMulai = $totalDiundang > 0 ? round(($mulaiHadir / $totalDiundang) * 100, 1) : 0;
-        $persenSelesai = $totalDiundang > 0 ? round(($selesaiHadir / $totalDiundang) * 100, 1) : 0;
-
-        return view('admin.absensi.rekap', compact('kegiatan', 'invited_users', 'sesi_mulai', 'sesi_selesai', 'persenMulai', 'persenSelesai', 'mulaiHadir', 'selesaiHadir', 'totalDiundang'));
+        return view('admin.absensi.rekap', compact(
+            'kegiatan',
+            'invited_users',
+            'sesi_mulai',
+            'sesi_selesai',
+            'summary',
+            'divisiStats'
+        ));
     }
 
     /**
@@ -276,49 +318,179 @@ class AbsensiController extends Controller
     {
         $year = $request->get('year', date('Y'));
         $month = $request->get('month');
+        $divisionFilter = $request->get('division');
+        $activityFilter = $request->get('activity');
 
-        $query = Kegiatan::whereYear('tanggal', $year); // Corrected 'tanggal_keg' to 'tanggal'
+        $query = Kegiatan::whereYear('tanggal', $year);
 
         if ($month) {
-            $query->whereMonth('tanggal', $month); // Corrected 'tanggal_keg' to 'tanggal'
+            $query->whereMonth('tanggal', $month);
         }
 
-        $kegiatans = $query->orderBy('tanggal', 'desc')->get(); // Corrected 'tanggal_keg' to 'tanggal'
+        if ($activityFilter) {
+            $query->where('nama_kegiatan', 'like', "%{$activityFilter}%");
+        }
+
+        $kegiatans = $query->orderBy('tanggal', 'desc')->get();
+
+        // Filter by division if selected - filter kegiatan to only those with invited members from that division
+        if ($divisionFilter) {
+            $kegiatanIdsWithDivision = AbsensiInvite::whereIn('user_id', function($q) use ($divisionFilter) {
+                $q->select('id')->from('users')->where('role', 'anggota')->where('divisi', $divisionFilter);
+            })->pluck('kegiatan_id')->unique();
+
+            $kegiatans = $kegiatans->whereIn('id', $kegiatanIdsWithDivision);
+        }
+
+        // Get IDs of all selected kegiatan for later use
+        $kegiatanIds = $kegiatans->pluck('id');
 
         $allRecapData = collect();
         $totalOverallInvited = 0;
-        $totalOverallAttended = 0;
+        $totalOverallHadir = 0;
+        $totalOverallIzin = 0;
+        $totalOverallAlfa = 0;
+
+        $allAttendanceRecords = collect(); // Collect all attendance for division analysis
 
         foreach ($kegiatans as $kegiatan) {
             $invitedUserIds = AbsensiInvite::where('kegiatan_id', $kegiatan->id)->pluck('user_id')->unique();
             $totalInvited = $invitedUserIds->count();
 
-            $attendedUserIds = Absensi::where('kegiatan_id', $kegiatan->id)
-                ->where('status', 'hadir')
-                ->whereIn('user_id', $invitedUserIds) // Only consider invited users
-                ->pluck('user_id')
-                ->unique();
-            $totalAttended = $attendedUserIds->count();
+            // Get attendance records for invited users only
+            $attendanceRecords = Absensi::where('kegiatan_id', $kegiatan->id)
+                ->whereIn('user_id', $invitedUserIds)
+                ->get();
 
-            $attendancePercentage = ($totalInvited > 0) ? round(($totalAttended / $totalInvited) * 100, 2) : 0.0;
+            // Accumulate all attendance records across all activities
+            $allAttendanceRecords = $allAttendanceRecords->merge($attendanceRecords);
+
+            // Count by status (sakit counted as izin)
+            $hadirCount = $attendanceRecords->where('status', 'hadir')->unique('user_id')->count();
+            $izinCount = $attendanceRecords->whereIn('status', ['izin', 'sakit'])->unique('user_id')->count();
+            $alfaCount = $attendanceRecords->where('status', 'alfa')->unique('user_id')->count();
+
+            $attendancePercentage = ($totalInvited > 0) ? round(($hadirCount / $totalInvited) * 100, 2) : 0.0;
+            $hadirPercent = ($totalInvited > 0) ? round(($hadirCount / $totalInvited) * 100, 1) : 0;
+            $izinPercent = ($totalInvited > 0) ? round(($izinCount / $totalInvited) * 100, 1) : 0;
+            $alfaPercent = ($totalInvited > 0) ? round(($alfaCount / $totalInvited) * 100, 1) : 0;
 
             $allRecapData->push([
                 'kegiatan' => $kegiatan,
                 'total_invited' => $totalInvited,
-                'total_attended' => $totalAttended,
+                'total_hadir' => $hadirCount,
+                'total_izin' => $izinCount,
+                'total_alfa' => $alfaCount,
                 'attendance_percentage' => $attendancePercentage,
+                'hadir_percent' => $hadirPercent,
+                'izin_percent' => $izinPercent,
+                'alfa_percent' => $alfaPercent,
             ]);
 
             $totalOverallInvited += $totalInvited;
-            $totalOverallAttended += $totalAttended;
+            $totalOverallHadir += $hadirCount;
+            $totalOverallIzin += $izinCount;
+            $totalOverallAlfa += $alfaCount;
         }
 
-        $overallGlobalPercentage = ($totalOverallInvited > 0) ? round(($totalOverallAttended / $totalOverallInvited) * 100, 2) : 0.0;
+        // Calculate overall percentages for pie chart
+        $overallHadirPercent = ($totalOverallInvited > 0) ? round(($totalOverallHadir / $totalOverallInvited) * 100, 2) : 0.0;
+        $overallIzinPercent = ($totalOverallInvited > 0) ? round(($totalOverallIzin / $totalOverallInvited) * 100, 2) : 0.0;
+        $overallAlfaPercent = ($totalOverallInvited > 0) ? round(($totalOverallAlfa / $totalOverallInvited) * 100, 2) : 0.0;
 
-        $years = Kegiatan::selectRaw('YEAR(tanggal) as year')->distinct()->pluck('year'); // Corrected 'tanggal_keg' to 'tanggal'
+        // Summary statistics
+        $summary = [
+            'avg_attendance' => $allRecapData->avg('attendance_percentage') ?? 0,
+            'best_kegiatan' => $allRecapData->sortByDesc('attendance_percentage')->first(),
+            'worst_kegiatan' => $allRecapData->sortBy('attendance_percentage')->first(),
+            'total_kegiatan' => $allRecapData->count(),
+            'total_anggota' => $totalOverallInvited,
+        ];
+
+        // Additional member-based stats
+        $kegiatanIds = $kegiatans->pluck('id');
+
+        $topAttendee = User::where('role', 'anggota')
+            ->withCount(['absensi as total_hadir' => function($q) use ($kegiatanIds) {
+                $q->whereIn('kegiatan_id', $kegiatanIds)
+                  ->where('status', 'hadir');
+            }])
+            ->orderBy('total_hadir', 'desc')
+            ->first();
+
+        $topAlfaMember = User::where('role', 'anggota')
+            ->withCount(['absensi as total_alfa' => function($q) use ($kegiatanIds) {
+                $q->whereIn('kegiatan_id', $kegiatanIds)
+                  ->where('status', 'alfa');
+            }])
+            ->orderBy('total_alfa', 'desc')
+            ->first();
+
+        $summary['top_attendee'] = $topAttendee;
+        $summary['top_alfa_member'] = $topAlfaMember;
+
+        // Monthly trend data for the year (group from allRecapData)
+        $monthlyTrend = $allRecapData->groupBy(function($item) {
+            return \Carbon\Carbon::parse($item['kegiatan']->tanggal)->month;
+        })->map(function($items, $month) {
+            $totalInvited = collect($items)->sum('total_invited');
+            $totalHadir = collect($items)->sum('total_hadir');
+            $percentage = $totalInvited > 0 ? round(($totalHadir / $totalInvited) * 100, 1) : 0;
+            return [
+                'month' => (int)$month,
+                'month_name' => \Carbon\Carbon::create()->month((int)$month)->shortMonthName,
+                'invited' => $totalInvited,
+                'hadir' => $totalHadir,
+                'percentage' => $percentage,
+            ];
+        })->sortBy('month')->values();
+
+        $summary['monthly_trend'] = $monthlyTrend;
+
+        // Division comparison (filtered by selected division if applicable)
+        $anggotaQuery = User::where('role', 'anggota');
+        if ($divisionFilter) {
+            $anggotaQuery->where('divisi', $divisionFilter);
+        }
+        $filteredAnggota = $anggotaQuery->get();
+
+        // Get invited users among filtered
+        $invitedInPeriod = $filteredAnggota->whereIn('id', AbsensiInvite::whereIn('kegiatan_id', $kegiatanIds)->pluck('user_id')->unique());
+
+        $divisionData = $invitedInPeriod->groupBy('divisi')->map(function($users, $divisi) use ($allAttendanceRecords) {
+            $userIds = $users->pluck('id');
+            $invited = $users->count();
+            $hadir = $allAttendanceRecords->whereIn('user_id', $userIds)->where('status', 'hadir')->unique('user_id')->count();
+            $izin = $allAttendanceRecords->whereIn('user_id', $userIds)->whereIn('status', ['izin', 'sakit'])->unique('user_id')->count();
+            $alfa = $allAttendanceRecords->whereIn('user_id', $userIds)->where('status', 'alfa')->unique('user_id')->count();
+            return [
+                'divisi' => $divisi,
+                'invited' => $invited,
+                'hadir' => $hadir,
+                'izin' => $izin,
+                'alfa' => $alfa,
+                'percentage' => $invited > 0 ? round(($hadir / $invited) * 100, 1) : 0,
+            ];
+        })->sortByDesc('percentage')->values();
+
+        if ($divisionData->isEmpty()) {
+            $divisionData = collect([[
+                'divisi' => $selectedDivision ?? 'Tidak Ada Data',
+                'invited' => 0,
+                'hadir' => 0,
+                'izin' => 0,
+                'alfa' => 0,
+                'percentage' => 0,
+            ]]);
+        }
+
+        $summary['division_comparison'] = $divisionData;
+
+        $years = Kegiatan::selectRaw('YEAR(tanggal) as year')->distinct()->pluck('year');
+        $divisions = User::where('role', 'anggota')->distinct()->pluck('divisi');
 
         // Manually paginate the collection
-        $perPage = 10; // Number of items per page
+        $perPage = 10;
         $currentPage = Paginator::resolveCurrentPage();
         $pagedData = $allRecapData->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
@@ -330,6 +502,6 @@ class AbsensiController extends Controller
             ['path' => $request->url()]
         );
 
-        return view('admin.absensi.rekap-global', compact('data', 'year', 'month', 'overallGlobalPercentage', 'years'));
+        return view('admin.absensi.rekap-global', compact('data', 'allRecapData', 'year', 'month', 'divisionFilter', 'activityFilter', 'overallHadirPercent', 'overallIzinPercent', 'overallAlfaPercent', 'summary', 'years', 'divisions'));
     }
 }

@@ -3,36 +3,106 @@
 @section('page-title', 'Daftar Kegiatan')
 
 @section('content')
-<div class="container-fluid px-0">
-    @php
-        $aktifCount = $kegiatans->where('status', 'aktif')->count();
-        $selesaiCount = $kegiatans->where('status', 'selesai')->count();
-    @endphp
+@php
+    $totalCount = $kegiatans->total();
+@endphp
 
-    <div class="page-banner mb-4">
-        <div class="page-banner-content">
-            <div class="page-banner-copy">
-                <div class="page-banner-icon">
+<div class="dashboard-container">
+    {{-- Hero Section --}}
+    <div class="hero-premium mb-4">
+        <div class="hero-content">
+            <div class="hero-logo">
+                <div class="hero-logo-icon">
                     <i class="fas fa-calendar-days"></i>
                 </div>
-                <div>
-                    <h4 class="fw-bold">Arsitektur Agenda</h4>
-                    <p>Kelola ritme kegiatan organisasi, status pelaksanaan, dan detail lokasi dalam satu halaman editorial.</p>
-                </div>
             </div>
-            <a href="{{ route('kegiatan.create') }}" class="btn btn-light px-4">
-                <i class="fas fa-plus me-2"></i>Tambah Baru
-            </a>
+            <div class="hero-text">
+                <div class="hero-greeting">Manajemen Kegiatan</div>
+                <h1 class="hero-title">GENERUS JEMBER</h1>
+                <p class="hero-subtitle">Kelola ritme kegiatan organisasi, status pelaksanaan, dan detail lokasi dalam satu halaman editorial.</p>
+            </div>
+            <div class="hero-badges">
+                <span class="hero-badge">Live Overview</span>
+                <span class="hero-badge">Panel Harian</span>
+            </div>
         </div>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Total Agenda</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $kegiatans->count() }}</div></div></div></div>
-        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Sedang Aktif</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $aktifCount }}</div></div></div></div>
-        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Sudah Selesai</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $selesaiCount }}</div></div></div></div>
+    {{-- Stats Cards --}}
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card-premium h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper" style="background: rgba(15, 159, 165, 0.1); color: var(--primary-color);">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value">{{ $totalCount }}</div>
+                            <div class="stat-label">Total Agenda</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card-premium h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper" style="background: rgba(15, 159, 165, 0.1); color: var(--primary-color);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value">{{ $aktifCount }}</div>
+                            <div class="stat-label">Sedang Aktif</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card-premium h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper" style="background: rgba(51, 196, 214, 0.12); color: var(--secondary-color);">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value">{{ $selesaiCount }}</div>
+                            <div class="stat-label">Sudah Selesai</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    {{-- Toolbar --}}
+    <div class="p-4 border-bottom">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <form action="{{ route('kegiatan.index') }}" method="GET" class="d-flex gap-2">
+                    <input type="text" name="search" class="form-control rounded-3" placeholder="Cari nama kegiatan..." value="{{ request('search') }}">
+                    <button type="submit" class="btn btn-primary px-4 rounded-3">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    @if(request('search'))
+                        <a href="{{ route('kegiatan.index') }}" class="btn btn-outline-secondary rounded-3">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    @endif
+                </form>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="{{ route('kegiatan.create') }}" class="btn btn-primary px-4 rounded-3">
+                    <i class="fas fa-plus me-2"></i>Tambah Kegiatan
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Main Table Card --}}
+    <div class="card stat-card-premium">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -49,7 +119,7 @@
                     <tbody>
                         @forelse($kegiatans as $index => $kegiatan)
                         <tr>
-                            <td class="ps-4 text-muted">{{ $index + 1 }}</td>
+                            <td class="ps-4 text-muted">{{ ($kegiatans->currentPage() - 1) * $kegiatans->perPage() + $index + 1 }}</td>
                             <td>
                                 <div class="fw-bold text-dark">{{ $kegiatan->nama_kegiatan }}</div>
                                 <small class="text-muted">Creator: {{ $kegiatan->creator->name ?? 'Admin' }}</small>
@@ -75,7 +145,8 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('kegiatan.destroy', $kegiatan->id) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
+                                        @csrf
+                                        @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-light rounded-circle text-danger">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>

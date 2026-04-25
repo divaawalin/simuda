@@ -37,23 +37,26 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Admin Area (Admin, Sekretaris, Ketua)
-    Route::middleware('role:admin,sekretaris,ketua')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::middleware('role:admin,sekretaris,ketua')->prefix('admin')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // Document Management
         Route::resource('/documents', DocumentController::class);
 
         // Export
-        Route::get('/export', [ExportController::class, 'index'])->name('admin.export.index');
-        Route::post('/export/pdf', [ExportController::class, 'exportPdf'])->name('admin.export.pdf');
-        Route::post('/export/excel', [ExportController::class, 'exportExcel'])->name('admin.export.excel');
+        Route::get('/export', [ExportController::class, 'index'])->name('export.index');
+        Route::post('/export/pdf', [ExportController::class, 'exportPdf'])->name('export.pdf');
+        Route::post('/export/excel', [ExportController::class, 'exportExcel'])->name('export.excel');
 
         // Manajemen Kegiatan
         Route::resource('/kegiatan', KegiatanController::class);
 
         // Manajemen Anggota
-        Route::resource('/anggota', AnggotaController::class);
+        // Custom routes must come BEFORE resource to avoid route conflicts
         Route::post('/anggota/{id}/toggle-status', [AnggotaController::class, 'toggleStatus'])->name('anggota.toggle-status');
+        Route::post('/anggota/import', [AnggotaController::class, 'import'])->name('anggota.import');
+        Route::get('/anggota/template', [AnggotaController::class, 'downloadTemplate'])->name('anggota.template');
+        Route::resource('/anggota', AnggotaController::class);
 
         // Manajemen Absensi
         Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
@@ -74,9 +77,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('/konten', KontenController::class);
 
         // Profile
-        Route::get('/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
-        Route::put('/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
-        Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password');
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
     });
 
     // Anggota Area

@@ -25,7 +25,7 @@
                     <span><i class="fas fa-download me-2"></i>Pilih Kegiatan</span>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.export.pdf') }}" method="POST" class="mb-3">
+                    <form action="{{ route('export.pdf') }}" method="POST" class="mb-3">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Export ke PDF</label>
@@ -43,7 +43,7 @@
 
                     <hr>
 
-                    <form action="{{ route('admin.export.excel') }}" method="POST">
+                    <form action="{{ route('export.excel') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Export ke Excel</label>

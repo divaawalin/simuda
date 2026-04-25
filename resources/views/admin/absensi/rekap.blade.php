@@ -1,14 +1,9 @@
 @extends('layouts.app')
 
-@section('page-title', 'Rekap Absensi')
+@section('page-title', 'Rekap Absensi: ' . ($kegiatan->nama_kegiatan ?? 'Kegiatan'))
 
 @section('content')
 <div class="container-fluid px-0">
-    @php
-        $mulaiHadir = $invited_users->filter(fn ($user) => !is_null($user->absen_mulai))->count();
-        $selesaiHadir = $invited_users->filter(fn ($user) => !is_null($user->absen_selesai))->count();
-    @endphp
-
     <div class="page-banner mb-4">
         <div class="page-banner-content">
             <div class="page-banner-copy">
@@ -17,51 +12,166 @@
                 </div>
                 <div>
                     <h4 class="fw-bold">Rekap Absensi Kegiatan</h4>
-                    <p>{{ $kegiatan->nama_kegiatan }}</p>
+                    <p>{{ $kegiatan->nama_kegiatan ?? 'Kegiatan' }} - {{ \Carbon\Carbon::parse($kegiatan->tanggal ?? now())->format('d M Y') }}</p>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- Summary Cards Row 1: Core Stats --}}
     <div class="row g-4 mb-4">
-        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Diundang</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $invited_users->count() }}</div></div></div></div>
-        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Hadir Sesi Mulai</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $mulaiHadir }}</div></div></div></div>
-        <div class="col-md-4"><div class="card border-0 rounded-4"><div class="card-body p-4"><small class="text-uppercase fw-bold text-muted d-block mb-2">Hadir Sesi Selesai</small><div class="display-6" style="font-size:2.2rem;font-weight:800;">{{ $selesaiHadir }}</div></div></div></div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-uppercase fw-bold text-muted">Total Diundang</small>
+                        <i class="fas fa-users" style="color: var(--primary-color); font-size: 1.25rem;"></i>
+                    </div>
+                    <div class="display-5 fw-bold" style="font-size:2.2rem;color:var(--primary-color);">{{ $summary['total_invited'] ?? 0 }}</div>
+                    <small class="text-muted">Peserta terdaftar</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-uppercase fw-bold text-muted">Hadir</small>
+                        <i class="fas fa-user-check" style="color: #22c55e; font-size: 1.25rem;"></i>
+                    </div>
+                    <div class="display-5 fw-bold text-success" style="font-size:2.2rem;">{{ $summary['total_hadir'] ?? 0 }}</div>
+                    @php $pct = ($summary['total_invited'] ?? 0) > 0 ? round(($summary['total_hadir'] / $summary['total_invited']) * 100, 1) : 0; @endphp
+                    <small class="text-muted">{{ $pct }}% dari total</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-uppercase fw-bold text-muted">Izin / Sakit</small>
+                        <i class="fas fa-calendar-check" style="color: #eab308; font-size: 1.25rem;"></i>
+                    </div>
+                    <div class="display-5 fw-bold" style="font-size:2.2rem;color:#eab308;">{{ $summary['total_izin'] ?? 0 }}</div>
+                    @php $pctIzin = ($summary['total_invited'] ?? 0) > 0 ? round(($summary['total_izin'] / $summary['total_invited']) * 100, 1) : 0; @endphp
+                    <small class="text-muted">{{ $pctIzin }}% dari total</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-uppercase fw-bold text-muted">Alfa</small>
+                        <i class="fas fa-user-times" style="color: #ef4444; font-size: 1.25rem;"></i>
+                    </div>
+                    <div class="display-5 fw-bold text-danger" style="font-size:2.2rem;">{{ $summary['total_alfa'] ?? 0 }}</div>
+                    @php $pctAlfa = ($summary['total_invited'] ?? 0) > 0 ? round(($summary['total_alfa'] / $summary['total_invited']) * 100, 1) : 0; @endphp
+                    <small class="text-muted">{{ $pctAlfa }}% dari total</small>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {{-- Diagram Kehadiran --}}
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-header bg-white border-0 pt-4 px-4">
-            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-chart-bar me-2" style="color: var(--primary-color);"></i>Diagram Persentase Kehadiran</h5>
+    {{-- Summary Cards Row 2: Session & Division --}}
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-uppercase fw-bold text-muted">Hadir Sesi Mulai</small>
+                        <i class="fas fa-play-circle" style="color: #3b82f6; font-size: 1.25rem;"></i>
+                    </div>
+                    <div class="display-5 fw-bold" style="font-size:2.2rem;color:#3b82f6;">{{ $summary['mulai_hadir'] ?? 0 }}</div>
+                    <small class="text-muted">Dari {{ $summary['total_invited'] ?? 0 }} peserta</small>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-4">
-            <canvas id="attendanceChart" width="400" height="200"></canvas>
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-uppercase fw-bold text-muted">Hadir Sesi Selesai</small>
+                        <i class="fas fa-flag-checkered" style="color: #8b5cf6; font-size: 1.25rem;"></i>
+                    </div>
+                    <div class="display-5 fw-bold" style="font-size:2.2rem;color:#8b5cf6;">{{ $summary['selesai_hadir'] ?? 0 }}</div>
+                    <small class="text-muted">Dari {{ $summary['total_invited'] ?? 0 }} peserta</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-uppercase fw-bold text-muted">Divisi Terbaik</small>
+                        <i class="fas fa-award" style="color: #f59e0b; font-size: 1.25rem;"></i>
+                    </div>
+                    @php $bestDiv = $summary['best_divisi'] ?? null; @endphp
+                    <div class="fw-bold text-dark mb-1" style="font-size:1.3rem;">{{ $bestDiv ? $bestDiv['divisi'] : '-' }}</div>
+                    <div class="badge bg-success-subtle fs-6 mb-2">{{ $bestDiv ? $bestDiv['percentage'] . '%' : '-' }}</div>
+                    <small class="text-muted">{{ $bestDiv ? $bestDiv['hadir'] . ' dari ' . $bestDiv['total'] . ' orang' : '' }}</small>
+                </div>
+            </div>
         </div>
     </div>
 
+    {{-- Charts Row: Side by Side --}}
+    <div class="row g-4 mb-4">
+        {{-- Stacked Bar Chart: Session Attendance --}}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-chart-bar me-2" style="color: var(--primary-color);"></i>Distribusi Kehadiran per Sesi</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div style="position: relative; height: 400px; width: 100%;">
+                        <canvas id="sessionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Horizontal Bar Chart: Attendance by Division --}}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-sitemap me-2" style="color: var(--primary-color);"></i>Kehadiran per Divisi</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div style="position: relative; height: 400px; width: 100%;">
+                        <canvas id="divisionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Detail Table Full Width --}}
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-header bg-white border-0 pt-4 px-4">
-            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-users-cog me-2" style="color: var(--primary-color);"></i>Detail Kehadiran</h5>
+            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-users me-2" style="color: var(--primary-color);"></i>Detail Kehadiran Anggota</h5>
         </div>
         <div class="card-body p-4">
+            {{-- Table Search --}}
+            <div class="mb-3">
+                <input type="text" id="searchTable" class="form-control rounded-3" placeholder="Cari nama atau divisi..." style="max-width: 300px;">
+            </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover align-middle mb-0" id="attendanceTable">
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-4">#</th>
                             <th>Nama Anggota</th>
                             <th>Divisi</th>
-                            <th>Status Mulai</th>
-                            <th>Waktu Mulai</th>
-                            <th>Status Selesai</th>
-                            <th>Waktu Selesai</th>
-                            <th>Persentase Kehadiran</th> {{-- New column header --}}
+                            <th class="text-center">Sesi Mulai</th>
+                            <th class="text-center">Sesi Selesai</th>
+                            <th class="text-center">Kehadiran</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($invited_users as $index => $user)
                         <tr>
-                            <td class="ps-4 text-muted">{{ $index + 1 }}</td>
+                            <td class="ps-4 text-muted">{{ $index + 1 + ($invited_users->currentPage() - 1) * $invited_users->perPage() }}</td>
                             <td>
                                 <div class="fw-bold text-dark">{{ $user->name }}</div>
                                 <small class="text-muted">{{ $user->email }}</small>
@@ -71,43 +181,29 @@
                                     {{ $user->divisi }}
                                 </span>
                             </td>
-                            <td>
-                                @php
-                                    $statusMulaiColor = $user->absen_mulai ? '#27ae60' : '#dc3545';
-                                    $statusSelesaiColor = $user->absen_selesai ? '#27ae60' : '#dc3545';
-                                @endphp
-                                <span class="badge rounded-pill px-3 py-2" style="background-color: {{ $statusMulaiColor }}20; color: {{ $statusMulaiColor }};">
-                                    {{ $user->absen_mulai ? 'Hadir' : 'Tidak Hadir' }}
-                                </span>
-                            </td>
-                            <td>
+                            <td class="text-center">
                                 @if($user->absen_mulai)
-                                    {{ \Carbon\Carbon::parse($user->absen_mulai->waktu_absen)->format('H:i:s d M Y') }}
+                                    <span class="badge bg-success">{{ \Carbon\Carbon::parse($user->absen_mulai->waktu_absen)->format('H:i') }}</span>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
-                            <td>
-                                <span class="badge rounded-pill px-3 py-2" style="background-color: {{ $statusSelesaiColor }}20; color: {{ $statusSelesaiColor }};">
-                                    {{ $user->absen_selesai ? 'Hadir' : 'Tidak Hadir' }}
-                                </span>
-                            </td>
-                            <td>
+                            <td class="text-center">
                                 @if($user->absen_selesai)
-                                    {{ \Carbon\Carbon::parse($user->absen_selesai->waktu_absen)->format('H:i:s d M Y') }}
+                                    <span class="badge bg-success">{{ \Carbon\Carbon::parse($user->absen_selesai->waktu_absen)->format('H:i') }}</span>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
-                            <td>
-                                <span class="badge rounded-pill px-3 py-2 {{ $user->attendance_percentage >= 75 ? 'bg-success' : ($user->attendance_percentage >= 50 ? 'bg-warning text-dark' : 'bg-danger') }}">
-                                    {{ round($user->attendance_percentage, 2) }}%
+                            <td class="text-center">
+                                <span class="badge rounded-pill px-3 py-2 {{ ($user->attendance_percentage ?? 0) >= 75 ? 'bg-success-subtle' : (($user->attendance_percentage ?? 0) >= 50 ? 'bg-warning text-dark' : 'bg-danger-subtle') }}">
+                                    {{ round($user->attendance_percentage ?? 0, 1) }}%
                                 </span>
-                            </td> {{-- New column data --}}
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">Belum ada anggota yang diabsen untuk kegiatan ini.</td> {{-- Adjusted colspan --}}
+                            <td colspan="6" class="text-center py-5 text-muted">Belum ada anggota yang diabsen untuk kegiatan ini.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -115,7 +211,7 @@
             </div>
         </div>
         <div class="card-footer bg-white border-0 py-3">
-            {{ $invited_users->links() }}
+            {{ $invited_users->appends(request()->query())->links() }}
         </div>
     </div>
 </div>
@@ -125,79 +221,114 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const labels = @json($invited_users->pluck('name'));
-        const data = @json($invited_users->pluck('attendance_percentage'));
+        const colors = {
+            hadir: { bg: 'rgba(34, 197, 94, 0.85)', border: 'rgba(34, 197, 94, 1)' },
+            izin: { bg: 'rgba(234, 179, 8, 0.85)', border: 'rgba(234, 179, 8, 1)' }
+        };
 
-        const ctx = document.getElementById('attendanceChart').getContext('2d');
-        const attendanceChart = new Chart(ctx, {
+        // Stacked Bar: Sesi Mulai vs Selesai
+        const ctxSession = document.getElementById('sessionChart').getContext('2d');
+        new Chart(ctxSession, {
             type: 'bar',
             data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Persentase Kehadiran (%)',
-                    data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.5)',
-                        'rgba(255, 159, 64, 0.5)',
-                        'rgba(255, 205, 86, 0.5)',
-                        'rgba(75, 192, 192, 0.5)',
-                        'rgba(54, 162, 235, 0.5)',
-                        'rgba(153, 102, 255, 0.5)',
-                        'rgba(201, 203, 207, 0.5)'
-                    ],
-                    borderColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)',
-                        'rgb(153, 102, 255)',
-                        'rgb(201, 203, 207)'
-                    ],
-                    borderWidth: 1
-                }]
+                labels: ['Sesi Mulai', 'Sesi Selesai'],
+                datasets: [
+                    {
+                        label: 'Hadir',
+                        data: [{{ $summary['mulai_hadir'] ?? 0 }}, {{ $summary['selesai_hadir'] ?? 0 }}],
+                        backgroundColor: colors.hadir.bg,
+                        borderColor: colors.hadir.border,
+                        borderWidth: 1,
+                        stack: 'status'
+                    },
+                    {
+                        label: 'Izin/Sakit',
+                        data: [
+                            {{ ($summary['total_invited'] ?? 0) - ($summary['mulai_hadir'] ?? 0) }},
+                            {{ ($summary['total_invited'] ?? 0) - ($summary['selesai_hadir'] ?? 0) }}
+                        ],
+                        backgroundColor: colors.izin.bg,
+                        borderColor: colors.izin.border,
+                        borderWidth: 1,
+                        stack: 'status'
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Persentase (%)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Nama Anggota'
-                        }
-                    }
-                },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 10 } },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed.y !== null) {
-                                    label += context.parsed.y + '%';
-                                }
-                                return label;
+                                const total = {{ $summary['total_invited'] ?? 0 }};
+                                const value = context.parsed.y;
+                                const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${context.dataset.label}: ${value} orang (${percent}%)`;
                             }
                         }
                     }
+                },
+                scales: {
+                    x: { stacked: true, title: { display: true, text: 'Sesi' } },
+                    y: { stacked: true, title: { display: true, text: 'Jumlah' }, beginAtZero: true }
                 }
             }
         });
+
+        // Horizontal Bar: Division
+        const divisiLabels = @json($divisiStats->pluck('divisi')->toArray());
+        const divisiPercent = @json($divisiStats->pluck('percentage')->toArray());
+        const divisiTotal = @json($divisiStats->pluck('total')->toArray());
+        const divisiHadir = @json($divisiStats->pluck('hadir')->toArray());
+
+        const ctxDiv = document.getElementById('divisionChart').getContext('2d');
+        new Chart(ctxDiv, {
+            type: 'bar',
+            data: {
+                labels: divisiLabels,
+                datasets: [{
+                    label: 'Kehadiran (%)',
+                    data: divisiPercent,
+                    backgroundColor: 'rgba(4, 142, 142, 0.75)',
+                    borderColor: 'rgba(4, 142, 142, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const idx = context.dataIndex;
+                                return `Hadir: ${divisiHadir[idx]} dari ${divisiTotal[idx]} orang (${context.parsed.x}%)`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { beginAtZero: true, max: 100, title: { display: true, text: 'Persentase (%)' } },
+                    y: { title: { display: true, text: 'Divisi' } }
+                }
+            }
+        });
+
+        // Table search
+        const searchInput = document.getElementById('searchTable');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const value = this.value.toLowerCase();
+                document.querySelectorAll('#attendanceTable tbody tr').forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(value) ? '' : 'none';
+                });
+            });
+        }
     });
 </script>
 @endpush
-

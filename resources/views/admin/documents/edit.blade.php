@@ -11,7 +11,7 @@
                     <span><i class="fas fa-edit me-2"></i>Edit Dokumen</span>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.documents.update', $document) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('documents.update', $document) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -42,7 +42,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Update
                             </button>
-                            <a href="{{ route('admin.documents.index') }}" class="btn btn-outline-secondary">Batal</a>
+                            <a href="{{ route('documents.index') }}" class="btn btn-outline-secondary">Batal</a>
                         </div>
                     </form>
                 </div>

@@ -19,7 +19,12 @@
                     <p>Pilih kegiatan, buka sesi, undang anggota, dan baca rekap kehadiran dari panel operasional ini.</p>
                 </div>
             </div>
-            <span class="badge rounded-pill px-3 py-2 text-white border border-light-subtle">{{ $aktifCount }} Kegiatan Aktif</span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge rounded-pill px-3 py-2 text-white border border-light-subtle">{{ $aktifCount }} Kegiatan Aktif</span>
+                <a href="{{ route('absensi.rekapGlobal') }}" class="btn btn-primary px-4 rounded-3">
+                    <i class="fas fa-chart-line me-2"></i>Rekap Global
+                </a>
+            </div>
         </div>
     </div>
 

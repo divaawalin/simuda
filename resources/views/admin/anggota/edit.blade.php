@@ -119,6 +119,60 @@
                         </div>
                     </div>
 
+                    <!-- Additional Fields -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="desa" class="form-label fw-semibold">Desa / Kelurahan</label>
+                            <input type="text" name="desa" id="desa" 
+                                   class="form-control @error('desa') is-invalid @enderror" 
+                                   value="{{ old('desa', $anggota->desa) }}" 
+                                   placeholder="Masukkan desa/kelurahan">
+                            @error('desa')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="kelompok" class="form-label fw-semibold">Kelompok / Unit</label>
+                            <input type="text" name="kelompok" id="kelompok" 
+                                   class="form-control @error('kelompok') is-invalid @enderror" 
+                                   value="{{ old('kelompok', $anggota->kelompok) }}" 
+                                   placeholder="Masukkan nama kelompok/unit">
+                            @error('kelompok')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="jenis_kelamin" class="form-label fw-semibold">Jenis Kelamin</label>
+                            <select name="jenis_kelamin" id="jenis_kelamin" class="form-select @error('jenis_kelamin') is-invalid @enderror">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L" {{ old('jenis_kelamin', $anggota->jenis_kelamin) == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="P" {{ old('jenis_kelamin', $anggota->jenis_kelamin) == 'P' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="status" class="form-label fw-semibold">Status Anggota</label>
+                            <select name="status" id="status" class="form-select @error('status') is-invalid @enderror">
+                                <option value="aktif" {{ old('status', $anggota->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="tidak_aktif" {{ old('status', $anggota->status) == 'tidak_aktif' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                     <!-- Password -->
                     <div class="col-md-6">
                         <div class="form-group mb-3">

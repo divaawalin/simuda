@@ -12,8 +12,10 @@ class KegiatanController extends Controller
     public function index(Request $request)
     {
         $kegiatans = Kegiatan::with('creator')->orderBy('tanggal', 'desc')->paginate(10);
+        $aktifCount = Kegiatan::where('status', 'aktif')->count();
+        $selesaiCount = Kegiatan::where('status', 'selesai')->count();
 
-        return view('admin.kegiatan.index', compact('kegiatans'));
+        return view('admin.kegiatan.index', compact('kegiatans', 'aktifCount', 'selesaiCount'));
     }
 
     public function create()

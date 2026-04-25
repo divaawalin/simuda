@@ -15,7 +15,7 @@
                     <p>Kelola dan unggah dokumen organisasi.</p>
                 </div>
             </div>
-            <a href="{{ route('admin.documents.create') }}" class="btn btn-primary px-4 fw-bold">
+            <a href="{{ route('documents.create') }}" class="btn btn-primary px-4 fw-bold">
                 <i class="fas fa-upload me-2"></i>Unggah Dokumen
             </a>
         </div>
@@ -48,13 +48,13 @@
                             <td>{{ $doc->created_at->format('d/m/Y') }}</td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.documents.show', $doc) }}" class="btn btn-sm btn-success" title="Download">
+                                    <a href="{{ route('documents.show', $doc) }}" class="btn btn-sm btn-success" title="Download">
                                         <i class="fas fa-download"></i>
                                     </a>
-                                    <a href="{{ route('admin.documents.edit', $doc) }}" class="btn btn-sm btn-warning" title="Edit">
+                                    <a href="{{ route('documents.edit', $doc) }}" class="btn btn-sm btn-warning" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.documents.destroy', $doc) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('documents.destroy', $doc) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus dokumen ini?')" title="Hapus">
