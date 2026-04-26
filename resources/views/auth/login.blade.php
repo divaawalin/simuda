@@ -1,8 +1,8 @@
 @extends('layouts.auth')
 
 @section('auth_content')
-    <div class="text-center mb-4">
-        <img src="{{ asset('assets/logo-generus.png') }}" alt="Logo Generus" class="img-fluid" style="max-height: 120px;">
+    <div class="text-center">
+        <img src="{{ asset('assets/logo-generus.png') }}" alt="Logo Generus" class="img-fluid" style="max-height: 180px;">
     </div>
     <form method="POST" action="{{ route('login') }}">
         @csrf
