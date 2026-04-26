@@ -13,7 +13,7 @@
                     <p>Perbarui identitas anggota <strong>{{ $anggota->name }}</strong> dan pastikan profilnya tetap akurat.</p>
                 </div>
             </div>
-            <a href="{{ route('anggota.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+            <a href="{{ route('admin.anggota.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
         </div>
     </div>
 
@@ -24,7 +24,7 @@
             </h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('anggota.update', $anggota->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.anggota.update', $anggota->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
@@ -229,7 +229,7 @@
 
                 <!-- Actions -->
                 <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                    <a href="{{ route('anggota.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.anggota.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Kembali
                     </a>
                     <div>

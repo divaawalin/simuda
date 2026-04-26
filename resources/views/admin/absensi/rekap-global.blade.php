@@ -24,7 +24,7 @@
             <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-filter me-2" style="color: var(--primary-color);"></i>Filter Data</h5>
         </div>
         <div class="card-body p-4">
-            <form action="{{ route('absensi.rekapGlobal') }}" method="GET">
+            <form action="{{ route('admin.absensi.rekapGlobal') }}" method="GET">
                 <div class="row g-3 align-items-end">
                     <div class="col-lg-3 col-md-4">
                         <label for="year" class="form-label">Tahun</label>
@@ -60,7 +60,7 @@
                 <div class="row g-3 mt-2">
                     <div class="col-12 text-end">
                         <button type="submit" class="btn btn-primary px-4">Filter</button>
-                        <a href="{{ route('absensi.rekapGlobal') }}" class="btn btn-outline-secondary">Reset</a>
+                         <a href="{{ route('admin.absensi.rekapGlobal') }}" class="btn btn-outline-secondary">Reset</a>
                     </div>
                 </div>
             </form>

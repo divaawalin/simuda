@@ -13,7 +13,7 @@
                     <p>Buat akun admin, sekretaris, atau ketua dengan profil dan role yang tepat.</p>
                 </div>
             </div>
-            <a href="{{ route('users.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+            <a href="{{ route('admin.users.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
         </div>
     </div>
 
@@ -24,7 +24,7 @@
             </h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="row g-4">
@@ -186,7 +186,7 @@
 
                 <!-- Actions -->
                 <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                    <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Kembali
                     </a>
                     <div>

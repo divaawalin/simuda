@@ -81,20 +81,20 @@
     <div class="p-4 border-bottom">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <form action="{{ route('kegiatan.index') }}" method="GET" class="d-flex gap-2">
+                 <form action="{{ route('admin.kegiatan.index') }}" method="GET" class="d-flex gap-2">
                     <input type="text" name="search" class="form-control rounded-3" placeholder="Cari nama kegiatan..." value="{{ request('search') }}">
                     <button type="submit" class="btn btn-primary px-4 rounded-3">
                         <i class="fas fa-search"></i>
                     </button>
                     @if(request('search'))
-                        <a href="{{ route('kegiatan.index') }}" class="btn btn-outline-secondary rounded-3">
+                         <a href="{{ route('admin.kegiatan.index') }}" class="btn btn-outline-secondary rounded-3">
                             <i class="fas fa-times"></i>
                         </a>
                     @endif
                 </form>
             </div>
             <div class="col-md-6 text-end">
-                <a href="{{ route('kegiatan.create') }}" class="btn btn-primary px-4 rounded-3">
+                 <a href="{{ route('admin.kegiatan.create') }}" class="btn btn-primary px-4 rounded-3">
                     <i class="fas fa-plus me-2"></i>Tambah Kegiatan
                 </a>
             </div>
@@ -141,10 +141,10 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('kegiatan.edit', $kegiatan->id) }}" class="btn btn-sm btn-light rounded-circle" style="color: var(--primary-color);">
+                                     <a href="{{ route('admin.kegiatan.edit', $kegiatan->id) }}" class="btn btn-sm btn-light rounded-circle" style="color: var(--primary-color);">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('kegiatan.destroy', $kegiatan->id) }}" method="POST" class="d-inline">
+                                     <form action="{{ route('admin.kegiatan.destroy', $kegiatan->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-light rounded-circle text-danger">

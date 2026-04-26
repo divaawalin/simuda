@@ -21,7 +21,7 @@
                     <p>Kelola gambar, dokumen, dan tautan sebagai katalog visual yang siap dibagikan ke anggota.</p>
                 </div>
             </div>
-            <a href="{{ route('konten.create') }}" class="btn btn-light px-4 shadow-sm">
+            <a href="{{ route('admin.konten.create') }}" class="btn btn-light px-4 shadow-sm">
                 <i class="fas fa-plus me-2"></i>Tambah Konten
             </a>
         </div>
@@ -57,10 +57,10 @@
                         {{ $konten->tipe === 'link' ? \Illuminate\Support\Str::limit($konten->link_url, 42) : \Illuminate\Support\Str::limit($konten->file_path, 42) }}
                     </p>
                     <div class="mt-auto d-flex gap-2">
-                        <a href="{{ route('konten.edit', $konten->id) }}" class="btn btn-outline-primary flex-grow-1">
+                         <a href="{{ route('admin.konten.edit', $konten->id) }}" class="btn btn-outline-primary flex-grow-1">
                             <i class="fas fa-pen me-2"></i>Edit
                         </a>
-                        <form action="{{ route('konten.destroy', $konten->id) }}" method="POST" class="flex-grow-1">
+                         <form action="{{ route('admin.konten.destroy', $konten->id) }}" method="POST" class="flex-grow-1">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-outline-secondary w-100 text-danger">
                                 <i class="fas fa-trash-alt me-2"></i>Hapus

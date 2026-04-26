@@ -21,7 +21,7 @@
             </div>
             <div class="d-flex align-items-center gap-3">
                 <span class="badge rounded-pill px-3 py-2 text-white border border-light-subtle">{{ $aktifCount }} Kegiatan Aktif</span>
-                <a href="{{ route('absensi.rekapGlobal') }}" class="btn btn-primary px-4 rounded-3">
+                <a href="{{ route('admin.absensi.rekapGlobal') }}" class="btn btn-primary px-4 rounded-3">
                     <i class="fas fa-chart-line me-2"></i>Rekap Global
                 </a>
             </div>
@@ -48,13 +48,13 @@
                             <p class="text-muted small mb-4"><i class="fas fa-map-marker-alt me-1" style="color: var(--secondary-color);"></i> {{ $kegiatan->lokasi }}</p>
                             
                             <div class="d-grid gap-2">
-                                <a href="{{ route('absensi.invite', $kegiatan->id) }}" class="btn btn-outline-primary rounded-3 fw-bold py-2">
+                                <a href="{{ route('admin.absensi.invite', $kegiatan->id) }}" class="btn btn-outline-primary rounded-3 fw-bold py-2">
                                     <i class="fas fa-user-plus me-1"></i> Invite Anggota
                                 </a>
-                                <a href="{{ route('absensi.sesi', $kegiatan->id) }}" class="btn text-white rounded-3 fw-bold py-2" style="background-color: var(--primary-color);">
+                                <a href="{{ route('admin.absensi.sesi', $kegiatan->id) }}" class="btn text-white rounded-3 fw-bold py-2" style="background-color: var(--primary-color);">
                                     <i class="fas fa-clock me-1"></i> Kelola Sesi & Absen
                                 </a>
-                                <a href="{{ route('absensi.rekap', $kegiatan->id) }}" class="btn btn-outline-info rounded-3 fw-bold py-2" style="color: var(--secondary-color); border-color: var(--secondary-color);">
+                                <a href="{{ route('admin.absensi.rekap', $kegiatan->id) }}" class="btn btn-outline-info rounded-3 fw-bold py-2" style="color: var(--secondary-color); border-color: var(--secondary-color);">
                                     <i class="fas fa-list-alt me-1"></i> Rekap Laporan
                                 </a>
                             </div>

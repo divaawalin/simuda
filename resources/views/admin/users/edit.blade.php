@@ -13,7 +13,7 @@
                     <p>Perbarui akun <strong>{{ $user->name }}</strong> termasuk role, kontak, dan kredensial jika diperlukan.</p>
                 </div>
             </div>
-            <a href="{{ route('users.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
+            <a href="{{ route('admin.users.index') }}" class="btn btn-light px-4"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
         </div>
     </div>
 
@@ -24,7 +24,7 @@
             </h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
@@ -192,7 +192,7 @@
 
                 <!-- Actions -->
                 <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                    <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Kembali
                     </a>
                     <div>

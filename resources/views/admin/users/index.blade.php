@@ -21,7 +21,7 @@
                     <p>Kelola akun dengan hak istimewa dan struktur peran inti organisasi secara lebih terkurasi.</p>
                 </div>
             </div>
-            <a href="{{ route('users.create') }}" class="btn btn-light px-4 shadow-sm">
+            <a href="{{ route('admin.users.create') }}" class="btn btn-light px-4 shadow-sm">
                 <i class="fas fa-plus me-2"></i>Tambah Admin
             </a>
         </div>
@@ -74,10 +74,10 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-light rounded-circle" style="color: var(--primary-color);">
+                                     <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-light rounded-circle" style="color: var(--primary-color);">
                                         <i class="fas fa-user-edit"></i>
                                     </a>
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
+                                     <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-light rounded-circle text-danger">
                                             <i class="fas fa-trash-alt"></i>

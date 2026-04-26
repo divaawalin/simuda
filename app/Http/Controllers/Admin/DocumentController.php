@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Models\Document;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class DocumentController extends Controller
 {
@@ -24,15 +24,21 @@ class DocumentController extends Controller
 
     public function store(StoreDocumentRequest $request)
     {
-        $file = $request->file('file');
-        $path = $file->store('documents', 'public');
+        $uploadedFile = $request->file('file');
+        
+        $fileSize = $uploadedFile->getSize();
+        $fileMime = $uploadedFile->getClientMimeType();
+        
+        File::ensureDirectoryExists(storage_path('dokumen'));
+        $fileName = time().'_'.uniqid().'.'.$uploadedFile->getClientOriginalExtension();
+        $uploadedFile->move(storage_path('dokumen'), $fileName);
 
         Document::create([
             'title' => $request->title,
             'description' => $request->description,
-            'file_path' => $path,
-            'file_type' => $file->getClientMimeType(),
-            'file_size' => $file->getSize(),
+            'file_path' => $fileName,
+            'file_type' => $fileMime,
+            'file_size' => $fileSize,
             'uploaded_by' => Auth::id(),
         ]);
 
@@ -41,7 +47,11 @@ class DocumentController extends Controller
 
     public function show(Document $document)
     {
-        return Storage::disk('public')->download($document->file_path);
+        $path = storage_path('dokumen/' . $document->file_path);
+        if (! File::exists($path)) {
+            abort(404);
+        }
+        return response()->download($path, $document->title . '.' . \File::extension($document->file_path));
     }
 
     public function edit(Document $document)
@@ -56,12 +66,21 @@ class DocumentController extends Controller
             'description' => $request->description,
         ];
 
-        if ($request->hasFile('file')) {
-            Storage::disk('public')->delete($document->file_path);
-            $file = $request->file('file');
-            $data['file_path'] = $file->store('documents', 'public');
-            $data['file_type'] = $file->getClientMimeType();
-            $data['file_size'] = $file->getSize();
+        $uploadedFile = $request->file('file');
+
+        if ($uploadedFile) {
+            $fileSize = $uploadedFile->getSize();
+            $fileMime = $uploadedFile->getClientMimeType();
+
+            if ($document->file_path && File::exists(storage_path('dokumen/'.$document->file_path))) {
+                File::delete(storage_path('dokumen/'.$document->file_path));
+            }
+            File::ensureDirectoryExists(storage_path('dokumen'));
+            $fileName = time().'_'.uniqid().'.'.$uploadedFile->getClientOriginalExtension();
+            $uploadedFile->move(storage_path('dokumen'), $fileName);
+            $data['file_path'] = $fileName;
+            $data['file_type'] = $fileMime;
+            $data['file_size'] = $fileSize;
         }
 
         $document->update($data);
@@ -71,7 +90,10 @@ class DocumentController extends Controller
 
     public function destroy(Document $document)
     {
-        Storage::disk('public')->delete($document->file_path);
+        if ($document->file_path && File::exists(storage_path('dokumen/'.$document->file_path))) {
+            File::delete(storage_path('dokumen/'.$document->file_path));
+        }
+
         $document->delete();
 
         return redirect()->route('admin.documents.index')->with('success', 'Dokumen berhasil dihapus.');

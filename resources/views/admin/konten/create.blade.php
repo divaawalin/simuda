@@ -20,7 +20,7 @@
     <!-- Form Card -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-4">
-            <form action="{{ route('konten.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.konten.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="row g-3 mb-4">
@@ -97,7 +97,7 @@
 
                 <!-- Actions -->
                 <div class="d-flex justify-content-between align-items-center pt-4 border-top">
-                    <a href="{{ route('konten.index') }}" class="btn btn-outline-secondary rounded-3 px-3 py-2">
+                    <a href="{{ route('admin.konten.index') }}" class="btn btn-outline-secondary rounded-3 px-3 py-2">
                         <i class="fas fa-arrow-left me-2"></i>Batal
                     </a>
                     <button type="submit" class="btn text-white rounded-3 px-4 py-2 fw-bold" style="background-color: var(--primary-color);">

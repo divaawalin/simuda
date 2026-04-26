@@ -146,20 +146,20 @@
             <div class="p-4 border-bottom">
                 <div class="row align-items-center">
 <div class="col-md-5">
-                        <form action="{{ route('anggota.index') }}" method="GET" class="d-flex gap-2">
+                         <form action="{{ route('admin.anggota.index') }}" method="GET" class="d-flex gap-2">
                             <input type="text" name="search" class="form-control rounded-3" placeholder="Cari nama, email, divisi, desa, kelompok, jenis kelamin..." value="{{ request('search') }}">
                             <button type="submit" class="btn btn-primary px-4 rounded-3">
                                 <i class="fas fa-search"></i>
                             </button>
                             @if(request('search'))
-                                <a href="{{ route('anggota.index') }}" class="btn btn-outline-secondary rounded-3">
+                                 <a href="{{ route('admin.anggota.index') }}" class="btn btn-outline-secondary rounded-3">
                                     <i class="fas fa-times"></i>
                                 </a>
                             @endif
                         </form>
                     </div>
                     <div class="col-md-7 text-end">
-                        <a href="{{ route('anggota.create') }}" class="btn btn-primary px-4 rounded-3 me-2">
+                         <a href="{{ route('admin.anggota.create') }}" class="btn btn-primary px-4 rounded-3 me-2">
                             <i class="fas fa-user-plus me-2"></i>Tambah Anggota
                         </a>
                         <button type="button" class="btn btn-outline-primary px-4 rounded-3" data-bs-toggle="modal" data-bs-target="#importModal">
@@ -214,10 +214,10 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('anggota.edit', $user->id) }}" class="btn btn-sm btn-light rounded-circle" style="color: var(--primary-color);">
+                                     <a href="{{ route('admin.anggota.edit', $user->id) }}" class="btn btn-sm btn-light rounded-circle" style="color: var(--primary-color);">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('anggota.destroy', $user->id) }}" method="POST" class="d-inline">
+                                     <form action="{{ route('admin.anggota.destroy', $user->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-light rounded-circle text-danger">
@@ -250,7 +250,7 @@
                 <h5 class="modal-title fw-bold text-dark"><i class="fas fa-file-excel me-2" style="color: var(--primary-color);"></i>Import Anggota Excel</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('anggota.import') }}" method="POST" enctype="multipart/form-data">
+             <form action="{{ route('admin.anggota.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -259,7 +259,7 @@
                         <div class="form-text mt-1">Format: .xlsx atau .xls (Maks. 2MB)</div>
                     </div>
                     <div class="mb-3">
-                        <a href="{{ route('anggota.template') }}" class="btn btn-sm btn-outline-secondary rounded-3">
+                         <a href="{{ route('admin.anggota.template') }}" class="btn btn-sm btn-outline-secondary rounded-3">
                             <i class="fas fa-download me-1"></i>Download Template
                         </a>
                     </div>

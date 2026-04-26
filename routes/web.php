@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Admin Area (Admin, Sekretaris, Ketua)
-    Route::middleware('role:admin,sekretaris,ketua')->prefix('admin')->group(function () {
+    Route::middleware('role:admin,sekretaris,ketua')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // Document Management

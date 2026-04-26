@@ -11,7 +11,7 @@
                     <span><i class="fas fa-edit me-2"></i>Edit Dokumen</span>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('documents.update', $document) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.documents.update', $document) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -31,7 +31,7 @@
                         <div class="mb-4">
                             <label for="file" class="form-label">Ganti File (Opsional)</label>
                             <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file">
-                            <div class="form-text">Format: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (Maks. 10MB)</div>
+                             <div class="form-text">Format: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (Maks. 10MB)<br>File saat ini: <code>{{ basename($document->file_path) }}</code> ({{ number_format($document->file_size / 1024, 2) }} KB)</div>
                             <div class="form-text">File saat ini: {{ basename($document->file_path) }}</div>
                             @error('file')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -42,7 +42,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Update
                             </button>
-                            <a href="{{ route('documents.index') }}" class="btn btn-outline-secondary">Batal</a>
+                            <a href="{{ route('admin.documents.index') }}" class="btn btn-outline-secondary">Batal</a>
                         </div>
                     </form>
                 </div>

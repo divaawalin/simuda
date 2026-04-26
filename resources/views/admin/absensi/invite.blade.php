@@ -15,7 +15,7 @@
                     <p>Pilih anggota yang akan diikutsertakan pada kegiatan <strong>{{ $kegiatan->nama_kegiatan }}</strong>.</p>
                 </div>
             </div>
-            <a href="{{ route('absensi.index') }}" class="btn btn-light px-4 fw-bold">
+            <a href="{{ route('admin.absensi.index') }}" class="btn btn-light px-4 fw-bold">
                 <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>
         </div>
@@ -26,7 +26,7 @@
             <span><i class="fas fa-users me-2"></i>Daftar Anggota Aktif</span>
         </div>
         <div class="card-body">
-            <form action="{{ route('absensi.store-invite', $kegiatan->id) }}" method="POST">
+            <form action="{{ route('admin.absensi.store-invite', $kegiatan->id) }}" method="POST">
                 @csrf
                 <div class="d-flex flex-wrap gap-2 mb-3">
                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectAll()">Pilih Semua</button>
@@ -59,7 +59,7 @@
                 {{ $anggota->links() }}
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">Simpan Daftar Invite</button>
-                    <a href="{{ route('absensi.index') }}" class="btn btn-outline-secondary">Batal</a>
+                    <a href="{{ route('admin.absensi.index') }}" class="btn btn-outline-secondary">Batal</a>
                 </div>
             </form>
         </div>

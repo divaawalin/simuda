@@ -58,7 +58,7 @@
                     <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-user-edit me-2" style="color: var(--primary-color);"></i>Edit Profil</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                     <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf @method('PUT')
                         
                         <div class="row g-3 mb-3">
@@ -109,7 +109,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <form action="{{ route('profile.password') }}" method="POST">
+                 <form action="{{ route('admin.profile.password') }}" method="POST">
                     @csrf @method('PUT')
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Password Saat Ini</label>

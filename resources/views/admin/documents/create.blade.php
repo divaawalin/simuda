@@ -11,7 +11,7 @@
                     <span><i class="fas fa-upload me-2"></i>Unggah Dokumen Baru</span>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.documents.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
@@ -40,7 +40,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
-                            <a href="{{ route('documents.index') }}" class="btn btn-outline-secondary">Batal</a>
+                            <a href="{{ route('admin.documents.index') }}" class="btn btn-outline-secondary">Batal</a>
                         </div>
                     </form>
                 </div>

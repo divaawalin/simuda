@@ -88,7 +88,7 @@
     {{-- Quick Actions 3 Columns --}}
     <div class="row g-3 mb-4">
         <div class="col-lg-4">
-            <a href="{{ route('anggota.create') }}" class="action-card h-100">
+            <a href="{{ route('admin.anggota.create') }}" class="action-card h-100">
                 <div class="action-card-icon" style="background: rgba(15, 159, 165, 0.1); color: var(--primary-color);">
                     <i class="fas fa-user-plus"></i>
                 </div>
@@ -97,7 +97,7 @@
             </a>
         </div>
         <div class="col-lg-4">
-            <a href="{{ route('kegiatan.create') }}" class="action-card h-100">
+            <a href="{{ route('admin.kegiatan.create') }}" class="action-card h-100">
                 <div class="action-card-icon" style="background: rgba(51, 196, 214, 0.12); color: var(--secondary-color);">
                     <i class="fas fa-calendar-plus"></i>
                 </div>
@@ -106,7 +106,7 @@
             </a>
         </div>
         <div class="col-lg-4">
-            <a href="{{ route('konten.create') }}" class="action-card h-100">
+            <a href="{{ route('admin.konten.create') }}" class="action-card h-100">
                 <div class="action-card-icon" style="background: rgba(15, 159, 165, 0.1); color: var(--primary-color);">
                     <i class="fas fa-cloud-arrow-up"></i>
                 </div>

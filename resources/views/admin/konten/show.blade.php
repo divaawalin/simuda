@@ -14,8 +14,8 @@
                 </div>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ route('konten.edit', $konten->id) }}" class="btn btn-light btn-sm px-4">Edit</a>
-                <a href="{{ route('konten.index') }}" class="btn btn-light btn-sm px-4">Kembali</a>
+                <a href="{{ route('admin.konten.edit', $konten->id) }}" class="btn btn-light btn-sm px-4">Edit</a>
+                <a href="{{ route('admin.konten.index') }}" class="btn btn-light btn-sm px-4">Kembali</a>
             </div>
         </div>
     </div>

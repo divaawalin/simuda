@@ -54,9 +54,9 @@
                         @endif
                     </div>
 
-                    @if($sesi_mulai->status_sesi == 'berlangsung')
-                        <div class="d-grid gap-2">
-                            <form action="{{ route('absensi.sesi-akhiri', $kegiatan->id) }}" method="POST">
+                     @if($sesi_mulai->status_sesi == 'berlangsung')
+                         <div class="d-grid gap-2">
+                             <form action="{{ route('admin.absensi.sesi-akhiri', $kegiatan->id) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="tipe_sesi" value="mulai">
                                 <button type="submit" class="btn btn-danger w-100 rounded-3 shadow-sm confirm-dialog" data-text="Akhiri sesi mulai?" title="Akhiri Sesi">
@@ -64,7 +64,7 @@
                                 </button>
                             </form>
                             @if($sesi_mulai->metode == 'qr_code')
-                                <a href="{{ route('absensi.qr', $kegiatan->id) }}" class="btn btn-primary rounded-3 shadow-sm">
+                                 <a href="{{ route('admin.absensi.qr', $kegiatan->id) }}" class="btn btn-primary rounded-3 shadow-sm">
                                     <i class="fas fa-qrcode me-1"></i> Buka QR Scanner
                                 </a>
                             @endif
@@ -75,7 +75,7 @@
                         <i class="fas fa-door-open fa-4x text-muted opacity-10 mb-3"></i>
                         <h6 class="text-muted">Sesi mulai belum dibuka.</h6>
                     </div>
-                    <form action="{{ route('absensi.sesi-mulai', $kegiatan->id) }}" method="POST" id="formMulai">
+                     <form action="{{ route('admin.absensi.sesi-mulai', $kegiatan->id) }}" method="POST" id="formMulai">
                         @csrf
                         <input type="hidden" name="tipe_sesi" value="mulai">
                         <input type="hidden" name="metode" id="metode_mulai" value="">
@@ -171,9 +171,9 @@
                         @endif
                     </div>
 
-                    @if($sesi_selesai->status_sesi == 'berlangsung')
-                        <div class="d-grid gap-2">
-                            <form action="{{ route('absensi.sesi-akhiri', $kegiatan->id) }}" method="POST">
+                     @if($sesi_selesai->status_sesi == 'berlangsung')
+                         <div class="d-grid gap-2">
+                             <form action="{{ route('admin.absensi.sesi-akhiri', $kegiatan->id) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="tipe_sesi" value="selesai">
                                 <button type="submit" class="btn btn-danger w-100 rounded-3 shadow-sm confirm-dialog" data-text="Akhiri sesi selesai?" title="Akhiri Sesi">
@@ -181,7 +181,7 @@
                                 </button>
                             </form>
                             @if($sesi_selesai->metode == 'qr_code')
-                                <a href="{{ route('absensi.qr', $kegiatan->id) }}" class="btn btn-info text-white rounded-3 shadow-sm">
+                                 <a href="{{ route('admin.absensi.qr', $kegiatan->id) }}" class="btn btn-info text-white rounded-3 shadow-sm">
                                     <i class="fas fa-qrcode me-1"></i> Buka QR Scanner
                                 </a>
                             @endif
@@ -192,7 +192,7 @@
                         <i class="fas fa-door-closed fa-4x text-muted opacity-10 mb-3"></i>
                         <h6 class="text-muted">Sesi selesai belum dibuka.</h6>
                     </div>
-                    <form action="{{ route('absensi.sesi-mulai', $kegiatan->id) }}" method="POST" id="formSelesai">
+                     <form action="{{ route('admin.absensi.sesi-mulai', $kegiatan->id) }}" method="POST" id="formSelesai">
                         @csrf
                         <input type="hidden" name="tipe_sesi" value="selesai">
                         <input type="hidden" name="metode" id="metode_selesai" value="">
@@ -254,7 +254,7 @@
 
 <div class="row mt-2">
     <div class="col-12 text-center">
-        <a href="{{ route('absensi.rekap', $kegiatan->id) }}" class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold">
+         <a href="{{ route('admin.absensi.rekap', $kegiatan->id) }}" class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold">
             <i class="fas fa-list-alt me-2"></i> LIHAT REKAP KEHADIRAN
         </a>
     </div>

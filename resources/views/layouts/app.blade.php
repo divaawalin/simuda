@@ -1921,32 +1921,32 @@
 
             <ul class="list-unstyled components">
                 @if(auth()->user()->role !== 'anggota')
-                    <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <a href="{{ route('dashboard') }}"><i class="fas fa-th me-2"></i> Dashboard</a>
-                    </li>
+                     <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                         <a href="{{ route('admin.dashboard') }}"><i class="fas fa-th me-2"></i> Dashboard</a>
+                     </li>
                     <li class="{{ request()->routeIs('kegiatan.*') ? 'active' : '' }}">
-                        <a href="{{ route('kegiatan.index') }}"><i class="fas fa-calendar-alt me-2"></i> Kegiatan</a>
+                         <a href="{{ route('admin.kegiatan.index') }}"><i class="fas fa-calendar-alt me-2"></i> Kegiatan</a>
                     </li>
-                    <li class="{{ request()->routeIs('anggota.*') ? 'active' : '' }}">
-                        <a href="{{ route('anggota.index') }}"><i class="fas fa-users me-2"></i> Anggota</a>
+                     <li class="{{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}">
+                         <a href="{{ route('admin.anggota.index') }}"><i class="fas fa-users me-2"></i> Anggota</a>
+                     </li>
+                     <li class="{{ request()->routeIs('admin.absensi.*') ? 'active' : '' }}">
+                         <a href="{{ route('admin.absensi.index') }}"><i class="fas fa-clipboard-check me-2"></i> Absensi</a>
+                     </li>
+                     <li class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                         <a href="{{ route('admin.users.index') }}"><i class="fas fa-user-shield me-2"></i> Admins</a>
+                     </li>
+                     <li class="{{ request()->routeIs('admin.konten.*') ? 'active' : '' }}">
+                         <a href="{{ route('admin.konten.index') }}"><i class="fas fa-layer-group me-2"></i> Konten</a>
+                     </li>
+                     <li class="{{ request()->routeIs('admin.documents.*') ? 'active' : '' }}">
+                         <a href="{{ route('admin.documents.index') }}"><i class="fas fa-file-archive me-2"></i> Dokumen</a>
+                     </li>
+                    <li class="{{ request()->routeIs('admin.export.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.export.index') }}"><i class="fas fa-file-export me-2"></i> Export</a>
                     </li>
-                    <li class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}">
-                        <a href="{{ route('absensi.index') }}"><i class="fas fa-clipboard-check me-2"></i> Absensi</a>
-                    </li>
-                    <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                        <a href="{{ route('users.index') }}"><i class="fas fa-user-shield me-2"></i> Admins</a>
-                    </li>
-                    <li class="{{ request()->routeIs('konten.*') ? 'active' : '' }}">
-                        <a href="{{ route('konten.index') }}"><i class="fas fa-layer-group me-2"></i> Konten</a>
-                    </li>
-                    <li class="{{ request()->routeIs('documents.*') ? 'active' : '' }}">
-                        <a href="{{ route('documents.index') }}"><i class="fas fa-file-archive me-2"></i> Dokumen</a>
-                    </li>
-                    <li class="{{ request()->routeIs('export.*') ? 'active' : '' }}">
-                        <a href="{{ route('export.index') }}"><i class="fas fa-file-export me-2"></i> Export</a>
-                    </li>
-                     <li class="{{ request()->routeIs('profile*') ? 'active' : '' }}">
-                         <a href="{{ route('profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
+                     <li class="{{ request()->routeIs('admin.profile*') ? 'active' : '' }}">
+                         <a href="{{ route('admin.profile') }}"><i class="fas fa-user-circle me-2"></i> Profile</a>
                      </li>
                  @else
                       <li class="{{ request()->routeIs('anggota.dashboard') ? 'active' : '' }}">
@@ -2019,7 +2019,7 @@
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ auth()->user()->role === 'anggota' ? route('anggota.profile') : route('profile') }}">
+                                         <a class="dropdown-item" href="{{ auth()->user()->role === 'anggota' ? route('anggota.profile') : route('admin.profile') }}">
                                             <i class="fas fa-user-circle"></i> My Profile
                                         </a>
                                     </li>
