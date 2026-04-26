@@ -645,15 +645,24 @@
             padding: 10px 24px;
             border-radius: var(--border-radius-sm);
             font-weight: 600;
-            color: white;
+            color: white !important;
             transition: var(--transition);
             box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
         }
 
-        .logout-btn:hover {
+        .logout-btn:hover, .logout-btn:focus {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
             background: linear-gradient(135deg, #dc3545, #e74c3c);
+            color: white !important;
+        }
+
+        .dropdown-item.text-white, .dropdown-item.text-white i {
+            color: white !important;
+        }
+
+        .dropdown-item.text-white:hover, .dropdown-item.text-white:hover i {
+            color: white !important;
         }
 
         /* Main Container */
@@ -2026,9 +2035,9 @@
                                     <li>
                                         <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
                                             @csrf
-                                            <button type="submit" class="dropdown-item text-danger logout-btn w-100 text-start">
-                                                <i class="fas fa-sign-out-alt"></i> Logout
-                                            </button>
+                                             <button type="submit" class="dropdown-item text-white logout-btn w-100 text-start">
+                                                 <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                             </button>
                                         </form>
                                     </li>
                                 </ul>
