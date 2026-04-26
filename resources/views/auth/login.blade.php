@@ -2,7 +2,7 @@
 
 @section('auth_content')
     <div class="text-center mb-4">
-        <img src="{{ asset('assets/logo-generus.png') }}" alt="Logo Generus" class="img-fluid" style="max-height: 80px;">
+        <img src="{{ asset('assets/logo-generus.png') }}" alt="Logo Generus" class="img-fluid" style="max-height: 120px;">
     </div>
     <form method="POST" action="{{ route('login') }}">
         @csrf
