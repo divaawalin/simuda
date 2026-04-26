@@ -7,6 +7,9 @@
 @section('subtitle', 'Masukkan email akun Anda untuk verifikasi.')
 
 @section('auth_content')
+    <div class="text-center mb-4">
+        <img src="{{ asset('assets/logo-generus.png') }}" alt="Logo Generus" class="img-fluid" style="max-height: 80px;">
+    </div>
     <form action="{{ url('/lupa-password') }}" method="POST">
         @csrf
 
