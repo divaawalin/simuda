@@ -17,15 +17,12 @@
     <div class="hero-premium mb-4">
         <div class="hero-content">
             <div class="hero-logo">
-                <div class="hero-logo-icon">
-                    <i class="fas fa-mosque"></i>
-                </div>
+                <img src="{{ asset('assets/generus-icon.png') }}" alt="Generus Jember Icon" class="brand-logo" style="width: 85px; height: 85px; object-fit: contain;">
             </div>
             <div class="hero-text">
                 <div class="hero-greeting">
                     Selamat Datang, {{ auth()->user()->name }} 👋
                 </div>
-                <h1 class="hero-title">GENERUS JEMBER</h1>
                 <p class="hero-subtitle">Pantau pertumbuhan anggota, agenda, distribusi konten, dan kehadiran tanpa pindah konteks.</p>
             </div>
             <div class="hero-badges">
@@ -193,7 +190,7 @@
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        events: {!! App\Models\Kegiatan::all()->map(fn($k) => ['title' => $k->nama_kegiatan, 'start' => $k->tanggal])->toJson() !!}
+        events: {!! App\Models\Kegiatan::all()->map(function($k) { return ['title' => $k->nama_kegiatan, 'start' => $k->tanggal]; })->toJson() !!}
     });
     calendar.render();
 </script>

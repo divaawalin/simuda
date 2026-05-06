@@ -362,6 +362,11 @@
         const izinPercent = @json($allRecapData->pluck('izin_percent')->toArray());
         const alfaPercent = @json($allRecapData->pluck('alfa_percent')->toArray());
 
+        // Overall percentages for donut
+        const overallHadirPercent = Number("{{ $overallHadirPercent ?? 0 }}");
+        const overallIzinPercent = Number("{{ $overallIzinPercent ?? 0 }}");
+        const overallAlfaPercent = Number("{{ $overallAlfaPercent ?? 0 }}");
+
         // Stacked Horizontal Bar Chart (per kegiatan)
         const ctxStacked = document.getElementById('stackedAttendanceChart').getContext('2d');
         new Chart(ctxStacked, {
@@ -428,7 +433,7 @@
             data: {
                 labels: ['Hadir', 'Izin/Sakit', 'Alfa'],
                 datasets: [{
-                    data: [{{ $overallHadirPercent ?? 0 }}, {{ $overallIzinPercent ?? 0 }}, {{ $overallAlfaPercent ?? 0 }}],
+                    data: [overallHadirPercent, overallIzinPercent, overallAlfaPercent],
                     backgroundColor: [colors.hadir.bg, colors.izin.bg, colors.alfa.bg],
                     borderColor: [colors.hadir.border, colors.izin.border, colors.alfa.border],
                     borderWidth: 2,

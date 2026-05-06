@@ -10,7 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="shortcut icon" href="{{ asset('assets/logo-generus.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/generus-icon.png') }}" type="image/x-icon">
     
     <style>
         :root {
@@ -93,23 +93,19 @@
 
         #sidebar .brand-wrapper {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 14px;
+            gap: 6px;
             position: relative;
             z-index: 1;
+            text-align: center;
         }
 
-        #sidebar .brand-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 12px rgba(15, 159, 165, 0.3);
+        #sidebar .brand-logo {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            flex-shrink: 0;
         }
 
         #sidebar .brand-text {
@@ -120,7 +116,71 @@
 
         #sidebar .brand-name {
             font-weight: 800;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        #sidebar .brand-location {
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Responsive: hide text on narrow sidebar */
+        @media (max-width: 768px) {
+            #sidebar .brand-text {
+                display: none;
+            }
+            #sidebar .brand-logo {
+                margin: 0 auto;
+                display: block;
+            }
+            #sidebar .brand-wrapper {
+                justify-content: center;
+            }
+        }
+
+        #sidebar .brand-logo {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        #sidebar .brand-name {
+            font-weight: 800;
+            font-size: 1.45rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        #sidebar .brand-location {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        #sidebar .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        #sidebar .brand-name {
+            font-weight: 800;
+            font-size: 1.4rem;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -132,8 +192,26 @@
             font-weight: 600;
             font-size: 0.85rem;
             color: var(--text-muted);
-            letter-spacing: 1.5px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        /* On narrow screens, stack vertically and center */
+        @media (max-width: 768px) {
+            #sidebar .brand-wrapper {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+            #sidebar .brand-text {
+                align-items: center;
+            }
+            #sidebar .brand-logo {
+                margin: 0 auto;
+                display: block;
+            }
         }
 
         #sidebar ul.components {
@@ -312,6 +390,18 @@
             color: white;
             font-size: 2rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-logo img {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 8px;
         }
 
         .hero-text {
@@ -1919,9 +2009,7 @@
         <nav id="sidebar">
             <div class="sidebar-header">
                 <div class="brand-wrapper">
-                    <div class="brand-icon">
-                        <i class="fas fa-mosque"></i>
-                    </div>
+                    <img src="{{ asset('assets/generus-icon.png') }}" alt="Generus Jember" class="brand-logo">
                     <div class="brand-text">
                         <span class="brand-name">GENERUS</span>
                         <span class="brand-location">JEMBER</span>

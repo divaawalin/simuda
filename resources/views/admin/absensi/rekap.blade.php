@@ -226,6 +226,12 @@
             izin: { bg: 'rgba(234, 179, 8, 0.85)', border: 'rgba(234, 179, 8, 1)' }
         };
 
+        // PHP summary data as JS constants
+        const summaryMulaiHadir = Number("{{ $summary['mulai_hadir'] ?? 0 }}");
+        const summarySelesaiHadir = Number("{{ $summary['selesai_hadir'] ?? 0 }}");
+        const summaryTotalInvited = Number("{{ $summary['total_invited'] ?? 0 }}");
+        const divisiStats = @json($divisiStats ?? []);
+
         // Stacked Bar: Sesi Mulai vs Selesai
         const ctxSession = document.getElementById('sessionChart').getContext('2d');
         new Chart(ctxSession, {
@@ -235,7 +241,7 @@
                 datasets: [
                     {
                         label: 'Hadir',
-                        data: [{{ $summary['mulai_hadir'] ?? 0 }}, {{ $summary['selesai_hadir'] ?? 0 }}],
+                        data: [summaryMulaiHadir, summarySelesaiHadir],
                         backgroundColor: colors.hadir.bg,
                         borderColor: colors.hadir.border,
                         borderWidth: 1,
@@ -243,10 +249,7 @@
                     },
                     {
                         label: 'Izin/Sakit',
-                        data: [
-                            {{ ($summary['total_invited'] ?? 0) - ($summary['mulai_hadir'] ?? 0) }},
-                            {{ ($summary['total_invited'] ?? 0) - ($summary['selesai_hadir'] ?? 0) }}
-                        ],
+                        data: [summaryTotalInvited - summaryMulaiHadir, summaryTotalInvited - summarySelesaiHadir],
                         backgroundColor: colors.izin.bg,
                         borderColor: colors.izin.border,
                         borderWidth: 1,
@@ -262,7 +265,7 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                const total = {{ $summary['total_invited'] ?? 0 }};
+                                const total = summaryTotalInvited;
                                 const value = context.parsed.y;
                                 const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
                                 return `${context.dataset.label}: ${value} orang (${percent}%)`;
@@ -278,10 +281,10 @@
         });
 
         // Horizontal Bar: Division
-        const divisiLabels = @json($divisiStats->pluck('divisi')->toArray());
-        const divisiPercent = @json($divisiStats->pluck('percentage')->toArray());
-        const divisiTotal = @json($divisiStats->pluck('total')->toArray());
-        const divisiHadir = @json($divisiStats->pluck('hadir')->toArray());
+        const divisiLabels = divisiStats.map(d => d.divisi);
+        const divisiPercent = divisiStats.map(d => d.percentage);
+        const divisiTotal = divisiStats.map(d => d.total);
+        const divisiHadir = divisiStats.map(d => d.hadir);
 
         const ctxDiv = document.getElementById('divisionChart').getContext('2d');
         new Chart(ctxDiv, {
@@ -317,18 +320,6 @@
                 }
             }
         });
-
-        // Table search
-        const searchInput = document.getElementById('searchTable');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', function() {
-                const value = this.value.toLowerCase();
-                document.querySelectorAll('#attendanceTable tbody tr').forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(value) ? '' : 'none';
-                });
-            });
-        }
     });
 </script>
 @endpush

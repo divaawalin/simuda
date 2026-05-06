@@ -8,7 +8,7 @@
 
 @section('auth_content')
     <div class="text-center">
-        <img src="{{ asset('assets/logo-generus.png') }}" alt="Logo Generus" class="img-fluid" style="max-height: 180px;">
+        <img src="{{ asset('assets/generus-logo-full.png') }}" alt="Generus Jember" class="img-fluid" style="max-height: 180px;">
     </div>
     <form action="{{ url('/reset-password') }}" method="POST">
         @csrf

@@ -70,7 +70,7 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label for="divisi" class="form-label fw-semibold">
-                                Divisi / Jabatan <span class="text-danger">*</span>
+                                Divisi / Dapukan <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="divisi" id="divisi" 
                                    class="form-control @error('divisi') is-invalid @enderror" 
@@ -115,11 +115,11 @@
                     <!-- Additional Fields -->
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="desa" class="form-label fw-semibold">Desa / Kelurahan</label>
+                            <label for="desa" class="form-label fw-semibold">Desa</label>
                             <input type="text" name="desa" id="desa" 
                                    class="form-control @error('desa') is-invalid @enderror" 
                                    value="{{ old('desa') }}" 
-                                   placeholder="Masukkan desa/kelurahan">
+                                    placeholder="Masukkan desa">
                             @error('desa')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
@@ -128,11 +128,11 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="kelompok" class="form-label fw-semibold">Kelompok / Unit</label>
+                            <label for="kelompok" class="form-label fw-semibold">Kelompok</label>
                             <input type="text" name="kelompok" id="kelompok" 
                                    class="form-control @error('kelompok') is-invalid @enderror" 
                                    value="{{ old('kelompok') }}" 
-                                   placeholder="Masukkan nama kelompok/unit">
+                                    placeholder="Masukkan kelompok">
                             @error('kelompok')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror

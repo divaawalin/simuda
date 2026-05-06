@@ -39,7 +39,7 @@ class KegiatanController extends Controller
         $data['created_by'] = Auth::id();
         Kegiatan::create($data);
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan.');
+        return redirect()->route('admin.kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -64,7 +64,7 @@ class KegiatanController extends Controller
         $kegiatan = Kegiatan::findOrFail($id);
         $kegiatan->update($request->all());
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil diperbarui.');
+        return redirect()->route('admin.kegiatan.index')->with('success', 'Kegiatan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -72,6 +72,6 @@ class KegiatanController extends Controller
         $kegiatan = Kegiatan::findOrFail($id);
         $kegiatan->delete();
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dihapus.');
+        return redirect()->route('admin.kegiatan.index')->with('success', 'Kegiatan berhasil dihapus.');
     }
 }

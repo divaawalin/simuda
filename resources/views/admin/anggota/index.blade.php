@@ -282,6 +282,10 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Chart data from PHP
+    const maleCount = Number("{{ $maleCount ?? 0 }}");
+    const femaleCount = Number("{{ $femaleCount ?? 0 }}");
+
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Import modal script loaded');
 
@@ -293,7 +297,7 @@
                 data: {
                     labels: ['Laki-laki', 'Lainnya'],
                     datasets: [{
-                        data: [{{ $maleCount ?? 0 }}, {{ $femaleCount ?? 0 }}],
+                        data: [maleCount, femaleCount],
                         backgroundColor: [
                             'rgba(59, 130, 246, 0.85)',
                             'rgba(0, 0, 0, 0.05)'
@@ -326,7 +330,7 @@
                 data: {
                     labels: ['Perempuan', 'Lainnya'],
                     datasets: [{
-                        data: [{{ $femaleCount ?? 0 }}, {{ $maleCount ?? 0 }}],
+                        data: [femaleCount, maleCount],
                         backgroundColor: [
                             'rgba(236, 72, 153, 0.85)',
                             'rgba(0, 0, 0, 0.05)'

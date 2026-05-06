@@ -76,7 +76,7 @@ class AnggotaController extends Controller
 
         User::create($data);
 
-        return redirect()->route('anggota.index')->with('success', 'Anggota berhasil ditambahkan.');
+        return redirect()->route('admin.anggota.index')->with('success', 'Anggota berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -119,7 +119,7 @@ class AnggotaController extends Controller
 
         $anggota->update($data);
 
-        return redirect()->route('anggota.index')->with('success', 'Data anggota berhasil diperbarui.');
+        return redirect()->route('admin.anggota.index')->with('success', 'Data anggota berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -133,7 +133,7 @@ class AnggotaController extends Controller
 
         $anggota->delete();
 
-        return redirect()->route('anggota.index')->with('success', 'Anggota berhasil dihapus.');
+        return redirect()->route('admin.anggota.index')->with('success', 'Anggota berhasil dihapus.');
     }
 
     public function toggleStatus($id)
@@ -142,7 +142,7 @@ class AnggotaController extends Controller
         $anggota->status = $anggota->status === 'aktif' ? 'tidak_aktif' : 'aktif';
         $anggota->save();
 
-        return redirect()->route('anggota.index')->with('success', 'Status anggota berhasil diubah.');
+        return redirect()->route('admin.anggota.index')->with('success', 'Status anggota berhasil diubah.');
     }
 
     public function import(Request $request)
@@ -154,9 +154,9 @@ class AnggotaController extends Controller
         try {
             Excel::import(new AnggotaImport, $request->file('file'));
 
-            return redirect()->route('anggota.index')->with('success', 'Import data anggota berhasil.');
+            return redirect()->route('admin.anggota.index')->with('success', 'Import data anggota berhasil.');
         } catch (\Exception $e) {
-            return redirect()->route('anggota.index')->with('error', 'Gagal import: '.$e->getMessage());
+            return redirect()->route('admin.anggota.index')->with('error', 'Gagal import: '.$e->getMessage());
         }
     }
 

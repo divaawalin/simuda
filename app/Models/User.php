@@ -18,6 +18,9 @@ class User extends Authenticatable
         'password',
         'alamat',
         'foto_profile',
+        'desa',
+        'kelompok',
+        'jenis_kelamin',
         'role',
         'status',
     ];
