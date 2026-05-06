@@ -144,8 +144,8 @@
         <div class="card-body p-0">
             {{-- Toolbar --}}
             <div class="p-4 border-bottom">
-                <div class="row align-items-center">
-<div class="col-md-5">
+                <div class="row align-items-center g-3">
+                    <div class="col-12 col-md-5">
                          <form action="{{ route('admin.anggota.index') }}" method="GET" class="d-flex gap-2">
                             <input type="text" name="search" class="form-control rounded-3" placeholder="Cari nama, email, divisi, desa, kelompok, jenis kelamin..." value="{{ request('search') }}">
                             <button type="submit" class="btn btn-primary px-4 rounded-3">
@@ -158,11 +158,11 @@
                             @endif
                         </form>
                     </div>
-                    <div class="col-md-7 text-end">
-                         <a href="{{ route('admin.anggota.create') }}" class="btn btn-primary px-4 rounded-3 me-2">
+                    <div class="col-12 col-md-7 text-md-end">
+                         <a href="{{ route('admin.anggota.create') }}" class="btn btn-primary px-4 rounded-3 me-md-2 mb-2 mb-md-0">
                             <i class="fas fa-user-plus me-2"></i>Tambah Anggota
                         </a>
-                        <button type="button" class="btn btn-outline-primary px-4 rounded-3" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <button type="button" class="btn btn-outline-primary px-4 rounded-3 mb-2 mb-md-0" data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="fas fa-file-excel me-2"></i>Import Excel
                         </button>
                     </div>

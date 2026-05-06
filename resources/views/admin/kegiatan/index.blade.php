@@ -79,8 +79,8 @@
 
     {{-- Toolbar --}}
     <div class="p-4 border-bottom">
-        <div class="row align-items-center">
-            <div class="col-md-6">
+        <div class="row align-items-center g-3">
+            <div class="col-12 col-md-6">
                  <form action="{{ route('admin.kegiatan.index') }}" method="GET" class="d-flex gap-2">
                     <input type="text" name="search" class="form-control rounded-3" placeholder="Cari nama kegiatan..." value="{{ request('search') }}">
                     <button type="submit" class="btn btn-primary px-4 rounded-3">
@@ -93,7 +93,7 @@
                     @endif
                 </form>
             </div>
-            <div class="col-md-6 text-end">
+            <div class="col-12 col-md-6 text-md-end">
                  <a href="{{ route('admin.kegiatan.create') }}" class="btn btn-primary px-4 rounded-3">
                     <i class="fas fa-plus me-2"></i>Tambah Kegiatan
                 </a>

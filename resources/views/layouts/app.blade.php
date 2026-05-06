@@ -341,6 +341,22 @@
             box-shadow: 0 20px 60px rgba(15, 159, 165, 0.25);
         }
 
+        @media (max-width: 768px) {
+            .hero-premium {
+                padding: 32px 20px;
+            }
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px !important;
+            }
+            .hero-badges {
+                justify-content: center;
+                margin-left: 0 !important;
+                align-self: center !important;
+            }
+        }
+
         .hero-premium::before {
             content: '';
             position: absolute;
@@ -2090,6 +2106,9 @@
             @auth
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-outline-primary d-lg-none me-3">
+                        <i class="fas fa-align-left"></i>
+                    </button>
                     <h5 class="mb-0 fw-bold page-title">@yield('page-title', 'Overview')</h5>
                     
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -2256,6 +2275,27 @@
                         form.submit();
                     }
                 });
+            });
+
+            // Sidebar Toggle
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            $(document).on('click', function (e) {
+                if ($(window).width() <= 768) {
+                    if (!$(e.target).closest('#sidebar').length && !$(e.target).closest('#sidebarCollapse').length) {
+                        $('#sidebar').removeClass('active');
+                    }
+                }
+            });
+
+            // Close sidebar when clicking menu links on mobile
+            $('#sidebar ul li a').on('click', function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').removeClass('active');
+                }
             });
         });
     </script>

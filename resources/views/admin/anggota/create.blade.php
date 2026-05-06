@@ -5,8 +5,8 @@
 @section('content')
 <div class="container-fluid px-0">
     <div class="page-banner mb-4">
-        <div class="page-banner-content">
-            <div class="page-banner-copy">
+        <div class="page-banner-content flex-column flex-md-row align-items-start align-items-md-center">
+            <div class="page-banner-copy mb-3 mb-md-0">
                 <div class="page-banner-icon"><i class="fas fa-user-plus"></i></div>
                 <div>
                     <h4 class="fw-bold">Tambah Anggota Baru</h4>

@@ -190,6 +190,19 @@
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next',
+            center: 'title',
+            right: ''
+        },
+        height: 'auto',
+        windowResize: function(view) {
+            if (window.innerWidth < 768) {
+                calendar.changeView('listMonth');
+            } else {
+                calendar.changeView('dayGridMonth');
+            }
+        },
         events: {!! App\Models\Kegiatan::all()->map(function($k) { return ['title' => $k->nama_kegiatan, 'start' => $k->tanggal]; })->toJson() !!}
     });
     calendar.render();
