@@ -1,4 +1,4 @@
-# SIMUDA (Sistem Informasi Muda Jember)
+﻿# SIMUDA (Sistem Informasi Muda Jember)
 
 SIMUDA adalah aplikasi berbasis web yang dirancang untuk mengelola data anggota, kegiatan, absensi, konten, dan dokumen organisasi secara efisien. Sistem ini dibangun dengan fokus pada kemudahan akses, antarmuka yang modern, dan responsivitas penuh di berbagai perangkat.
 
@@ -80,7 +80,7 @@ Jika project ini bermanfaat, Anda dapat mendukung pengembangan selanjutnya melal
 
 <div align="center">
 
-![QRIS](public/assets/qris.png)
+<img src="public/assets/qris.png" alt="QRIS" width="250" />
 
 **Scan QRIS di atas untuk berdonasi**
 
