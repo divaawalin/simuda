@@ -72,3 +72,21 @@ Proyek ini dikembangkan untuk kebutuhan organisasi. Jika Anda memiliki saran ata
 
 ---
 *Dikembangkan oleh Tim IT Generus Jember.*
+
+
+## Donasi
+
+Jika project ini bermanfaat, Anda dapat mendukung pengembangan selanjutnya melalui donasi:
+
+<div align="center">
+
+![QRIS](public/assets/qris.png)
+
+**Scan QRIS di atas untuk berdonasi**
+
+Setiap donasi akan digunakan untuk:
+- Pengembangan fitur baru
+- Perbaikan bug & maintenance
+- Infrastruktur server
+
+</div>
